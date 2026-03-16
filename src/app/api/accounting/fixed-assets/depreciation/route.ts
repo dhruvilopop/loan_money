@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: 'No active assets found for depreciation', results: [] });
     }
 
-    const results = [];
+    const results: any[] = [];
     const journalLines: any[] = [];
     let totalDepreciation = 0;
 
