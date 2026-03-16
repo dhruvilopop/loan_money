@@ -259,7 +259,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Calculate future depreciation schedule
-    const schedule = [];
+    const schedule: any[] = [];
     let remainingValue = asset.currentBookValue;
     let remainingLife = asset.usefulLifeMonths - (depreciationLogs.length);
     
