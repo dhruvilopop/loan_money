@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { BankTransactionService } from '@/lib/bank-transaction-service';
 import { AccountingService, ACCOUNT_CODES } from '@/lib/accounting-service';
 
 // Expense type to account code mapping
