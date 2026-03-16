@@ -1440,7 +1440,7 @@ export default function LoanDetailPanel({ loanId, open, onClose, onEMIPaid, user
                             { date: loanDetails?.companyApprovedAt, event: 'Company Approved', status: 'COMPANY_APPROVED' },
                             { date: loanDetails?.agentApprovedAt, event: 'Agent Approved', status: 'AGENT_APPROVED_STAGE1' },
                             { date: loanDetails?.loanFormCompletedAt, event: 'Form Completed', status: 'LOAN_FORM_COMPLETED' },
-                            { date: loanDetails?.sessionCreatedAt, event: 'Session Created', status: 'SESSION_CREATED' },
+                            { date: loanDetails?.sessionCreatedAt, event: 'Sanction Created', status: 'SESSION_CREATED' },
                             { date: loanDetails?.customerApprovedAt, event: 'Customer Approved Session', status: 'CUSTOMER_SESSION_APPROVED' },
                             { date: loanDetails?.finalApprovedAt, event: 'Final Approved', status: 'FINAL_APPROVED' },
                             { date: loanDetails?.disbursedAt, event: 'Loan Disbursed', status: 'DISBURSED' },

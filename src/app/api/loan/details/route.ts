@@ -145,7 +145,7 @@ function buildWorkflowPipeline(workflowLogs: any[], loan: any) {
     { status: 'COMPANY_APPROVED', label: 'Company Approved', role: 'COMPANY', timestamp: loan.companyApprovedAt },
     { status: 'AGENT_APPROVED_STAGE1', label: 'Agent Approved', role: 'AGENT', timestamp: loan.agentApprovedAt },
     { status: 'LOAN_FORM_COMPLETED', label: 'Form Completed', role: 'STAFF', timestamp: loan.loanFormCompletedAt },
-    { status: 'SESSION_CREATED', label: 'Session Created', role: 'AGENT', timestamp: loan.sessionCreatedAt },
+    { status: 'SESSION_CREATED', label: 'Sanction Created', role: 'AGENT', timestamp: loan.sessionCreatedAt },
     { status: 'CUSTOMER_SESSION_APPROVED', label: 'Customer Approved', role: 'CUSTOMER', timestamp: loan.customerApprovedAt },
     { status: 'FINAL_APPROVED', label: 'Final Approved', role: 'SUPER_ADMIN', timestamp: loan.finalApprovedAt },
     { status: 'ACTIVE', label: 'Disbursed', role: 'CASHIER', timestamp: loan.disbursedAt }

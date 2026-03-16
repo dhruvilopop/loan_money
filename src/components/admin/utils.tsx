@@ -9,7 +9,7 @@ export const STATUS_CONFIG: Record<string, { className: string; label: string }>
   COMPANY_APPROVED: { className: 'bg-teal-100 text-teal-700', label: 'Company Approved' },
   AGENT_APPROVED_STAGE1: { className: 'bg-cyan-100 text-cyan-700', label: 'Agent Approved' },
   LOAN_FORM_COMPLETED: { className: 'bg-violet-100 text-violet-700', label: 'Form Complete' },
-  SESSION_CREATED: { className: 'bg-amber-100 text-amber-700', label: 'Session Created' },
+  SESSION_CREATED: { className: 'bg-amber-100 text-amber-700', label: 'Sanction Created' },
   CUSTOMER_SESSION_APPROVED: { className: 'bg-green-100 text-green-700', label: 'Awaiting Final' },
   FINAL_APPROVED: { className: 'bg-green-100 text-green-700', label: 'Final Approved' },
   DISBURSED: { className: 'bg-green-100 text-green-700', label: 'Disbursed' },

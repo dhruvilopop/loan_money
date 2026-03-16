@@ -414,7 +414,7 @@ export default function StaffDashboard() {
     const config: Record<string, { className: string; label: string }> = {
       AGENT_APPROVED_STAGE1: { className: 'bg-orange-100 text-orange-700 border-orange-200', label: 'Pending Form' },
       LOAN_FORM_COMPLETED: { className: 'bg-violet-100 text-violet-700 border-violet-200', label: 'Form Completed' },
-      SESSION_CREATED: { className: 'bg-amber-100 text-amber-700 border-amber-200', label: 'Session Created' },
+      SESSION_CREATED: { className: 'bg-amber-100 text-amber-700 border-amber-200', label: 'Sanction Created' },
       REJECTED_FINAL: { className: 'bg-red-100 text-red-700 border-red-200', label: 'Rejected' },
     };
     const c = config[status] || { className: 'bg-gray-100 text-gray-700 border-gray-200', label: status };

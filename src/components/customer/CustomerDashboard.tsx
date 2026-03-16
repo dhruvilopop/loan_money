@@ -245,7 +245,7 @@ export default function CustomerDashboard() {
         })
       });
       if (response.ok) {
-        toast({ title: 'Session Approved', description: 'Your loan session has been approved!' });
+        toast({ title: 'Sanction Approved', description: 'Your loan sanction has been approved!' });
         setShowLoanDetails(false);
         fetchLoans();
         
@@ -277,7 +277,7 @@ export default function CustomerDashboard() {
         })
       });
       if (response.ok) {
-        toast({ title: 'Session Rejected', description: 'The loan session has been rejected.' });
+        toast({ title: 'Sanction Rejected', description: 'The loan sanction has been rejected.' });
         setShowLoanDetails(false);
         fetchLoans();
       }
@@ -490,7 +490,7 @@ export default function CustomerDashboard() {
       COMPANY_APPROVED: { className: 'bg-teal-100 text-teal-700', label: 'Company Approved' },
       AGENT_APPROVED_STAGE1: { className: 'bg-cyan-100 text-cyan-700', label: 'Agent Approved' },
       LOAN_FORM_COMPLETED: { className: 'bg-indigo-100 text-indigo-700', label: 'Verification Complete' },
-      SESSION_CREATED: { className: 'bg-amber-100 text-amber-700', label: 'Session Created' },
+      SESSION_CREATED: { className: 'bg-amber-100 text-amber-700', label: 'Sanction Created' },
       CUSTOMER_SESSION_APPROVED: { className: 'bg-green-100 text-green-700', label: 'Awaiting Disbursement' },
       FINAL_APPROVED: { className: 'bg-green-100 text-green-700', label: 'Final Approved' },
       ACTIVE: { className: 'bg-green-100 text-green-700', label: 'Active' },
@@ -498,7 +498,7 @@ export default function CustomerDashboard() {
       REJECTED_BY_SA: { className: 'bg-red-100 text-red-700', label: 'Rejected' },
       REJECTED_BY_COMPANY: { className: 'bg-red-100 text-red-700', label: 'Rejected' },
       REJECTED_FINAL: { className: 'bg-red-100 text-red-700', label: 'Rejected' },
-      SESSION_REJECTED: { className: 'bg-red-100 text-red-700', label: 'Session Rejected' },
+      SESSION_REJECTED: { className: 'bg-red-100 text-red-700', label: 'Sanction Rejected' },
     };
     const c = config[status] || { className: 'bg-gray-100 text-gray-700', label: status };
     return <Badge className={c.className}>{c.label}</Badge>;
@@ -1140,7 +1140,7 @@ export default function CustomerDashboard() {
               {selectedLoan.status === 'SESSION_CREATED' && selectedLoan.sessionForm && (
                 <Card className="bg-amber-50 border-amber-200">
                   <CardHeader>
-                    <CardTitle className="text-amber-800 text-base">Session Details - Review & Approve</CardTitle>
+                    <CardTitle className="text-amber-800 text-base">Sanction Details - Review & Accept</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="grid grid-cols-2 gap-3 text-sm">

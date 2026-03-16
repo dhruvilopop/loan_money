@@ -17,7 +17,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Shield, FileText, CheckCircle, XCircle, Clock, Users, Wallet, AlertTriangle, Eye, Building2, UserPlus, Edit, Trash2, Settings, Save, User, ClipboardCheck, Banknote, Briefcase, Plus, TrendingUp, Activity, DollarSign, BarChart3, ArrowRight, Calculator, PieChart, X, Loader2, MapPin, Phone, Mail, Calendar, FileCheck, CreditCard, Receipt, ExternalLink, RefreshCw, Info, Hash, CreditCard as CardIcon, Landmark, UserCog } from 'lucide-react';
+import { Shield, FileText, CheckCircle, XCircle, Clock, Users, Wallet, AlertTriangle, Eye, Building2, UserPlus, Edit, Trash2, Settings, Save, User, ClipboardCheck, Banknote, Briefcase, Plus, TrendingUp, Activity, DollarSign, BarChart3, ArrowRight, Calculator, PieChart, X, Loader2, MapPin, Phone, Mail, Calendar, FileCheck, CreditCard, Receipt, ExternalLink, RefreshCw, Info, Hash, CreditCard as CardIcon, Landmark, UserCog, Percent, IndianRupee } from 'lucide-react';
 import { formatCurrency, formatDate, generateApplicationNo } from '@/utils/helpers';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -140,6 +140,57 @@ export default function SuperAdminDashboard() {
   const [resetConfirmText, setResetConfirmText] = useState('');
   const [resetting, setResetting] = useState(false);
 
+  // Interest Only Loans state
+  const [interestLoans, setInterestLoans] = useState<any[]>([]);
+  const [interestLoanStats, setInterestLoanStats] = useState({
+    totalLoans: 0,
+    interestOnlyPhase: 0,
+    emiPhase: 0,
+    totalPrincipal: 0,
+    totalInterestCollected: 0
+  });
+  const [showInterestLoanForm, setShowInterestLoanForm] = useState(false);
+  const [showInterestLoanDetails, setShowInterestLoanDetails] = useState(false);
+  const [selectedInterestLoan, setSelectedInterestLoan] = useState<any>(null);
+  const [showStartEmiDialog, setShowStartEmiDialog] = useState(false);
+  const [emiForm, setEmiForm] = useState({
+    interestRate: 12,
+    tenureMonths: 12
+  });
+  const [interestLoanForm, setInterestLoanForm] = useState({
+    customerId: '',
+    principalAmount: 10000,
+    interestOnlyRate: 12,
+    purpose: '',
+    title: '',
+    firstName: '',
+    lastName: '',
+    fatherName: '',
+    panNumber: '',
+    aadhaarNumber: '',
+    dateOfBirth: '',
+    address: '',
+    city: '',
+    state: '',
+    pincode: '',
+    phone: '',
+    employmentType: '',
+    monthlyIncome: '',
+    bankAccountNumber: '',
+    bankIfsc: '',
+    bankName: '',
+    ref1Name: '',
+    ref1Phone: '',
+    ref1Relation: '',
+    ref1Address: '',
+    ref2Name: '',
+    ref2Phone: '',
+    ref2Relation: '',
+    ref2Address: '',
+    creditScore: 0
+  });
+  const [savingInterestLoan, setSavingInterestLoan] = useState(false);
+
   useEffect(() => {
     fetchLoans();
     fetchUsers();
@@ -147,6 +198,7 @@ export default function SuperAdminDashboard() {
     fetchProducts();
     fetchSettings();
     fetchAllActiveLoans();
+    fetchInterestLoans();
   }, []);
 
   const fetchCompanies = async () => {
@@ -260,6 +312,154 @@ export default function SuperAdminDashboard() {
       console.error('Error fetching all active loans:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Fetch Interest Only Loans
+  const fetchInterestLoans = async () => {
+    try {
+      const response = await fetch('/api/interest-loan');
+      const data = await response.json();
+      if (data.success) {
+        setInterestLoans(data.loans || []);
+        setInterestLoanStats(data.stats || {
+          totalLoans: 0,
+          interestOnlyPhase: 0,
+          emiPhase: 0,
+          totalPrincipal: 0,
+          totalInterestCollected: 0
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching interest loans:', error);
+    }
+  };
+
+  // View Interest Loan Details
+  const viewInterestLoanDetails = async (loan: any) => {
+    try {
+      const response = await fetch(`/api/interest-loan?action=details&loanId=${loan.id}`);
+      const data = await response.json();
+      if (data.success) {
+        setSelectedInterestLoan(data.loan);
+        setShowInterestLoanDetails(true);
+      } else {
+        toast({ title: 'Error', description: 'Failed to fetch loan details', variant: 'destructive' });
+      }
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to fetch loan details', variant: 'destructive' });
+    }
+  };
+
+  // Open Start EMI Dialog
+  const openStartEmiDialog = (loan: any) => {
+    setSelectedInterestLoan(loan);
+    setEmiForm({
+      interestRate: loan.interestOnlyRate,
+      tenureMonths: 12
+    });
+    setShowStartEmiDialog(true);
+  };
+
+  // Create Interest Only Loan
+  const handleCreateInterestLoan = async () => {
+    if (!interestLoanForm.customerId || !interestLoanForm.principalAmount || !interestLoanForm.interestOnlyRate) {
+      toast({ title: 'Error', description: 'Please fill all required fields', variant: 'destructive' });
+      return;
+    }
+
+    setSavingInterestLoan(true);
+    try {
+      const response = await fetch('/api/interest-loan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...interestLoanForm,
+          userId: user?.id
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        toast({ title: 'Success', description: 'Interest Only Loan created successfully' });
+        setShowInterestLoanForm(false);
+        setInterestLoanForm({
+          customerId: '',
+          principalAmount: 10000,
+          interestOnlyRate: 12,
+          purpose: '',
+          title: '',
+          firstName: '',
+          lastName: '',
+          fatherName: '',
+          panNumber: '',
+          aadhaarNumber: '',
+          dateOfBirth: '',
+          address: '',
+          city: '',
+          state: '',
+          pincode: '',
+          phone: '',
+          employmentType: '',
+          monthlyIncome: '',
+          bankAccountNumber: '',
+          bankIfsc: '',
+          bankName: '',
+          ref1Name: '',
+          ref1Phone: '',
+          ref1Relation: '',
+          ref1Address: '',
+          ref2Name: '',
+          ref2Phone: '',
+          ref2Relation: '',
+          ref2Address: '',
+          creditScore: 0
+        });
+        fetchInterestLoans();
+      } else {
+        toast({ title: 'Error', description: data.error || 'Failed to create loan', variant: 'destructive' });
+      }
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to create loan', variant: 'destructive' });
+    } finally {
+      setSavingInterestLoan(false);
+    }
+  };
+
+  // Start EMI Phase
+  const handleStartEmiPhase = async () => {
+    if (!selectedInterestLoan) return;
+
+    setSavingInterestLoan(true);
+    try {
+      const response = await fetch('/api/interest-loan', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'start_emi_phase',
+          interestLoanId: selectedInterestLoan.id,
+          emiInterestRate: emiForm.interestRate,
+          emiTenureMonths: emiForm.tenureMonths,
+          userId: user?.id
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        toast({ 
+          title: 'EMI Phase Started', 
+          description: `EMI: ${formatCurrency(data.emiAmount)}, Tenure: ${data.emiSchedulesCreated} months` 
+        });
+        setShowStartEmiDialog(false);
+        setSelectedInterestLoan(null);
+        fetchInterestLoans();
+      } else {
+        toast({ title: 'Error', description: data.error || 'Failed to start EMI phase', variant: 'destructive' });
+      }
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to start EMI phase', variant: 'destructive' });
+    } finally {
+      setSavingInterestLoan(false);
     }
   };
 
@@ -660,7 +860,7 @@ export default function SuperAdminDashboard() {
       COMPANY_APPROVED: { className: 'bg-teal-100 text-teal-700', label: 'Company Approved' },
       AGENT_APPROVED_STAGE1: { className: 'bg-cyan-100 text-cyan-700', label: 'Agent Approved' },
       LOAN_FORM_COMPLETED: { className: 'bg-violet-100 text-violet-700', label: 'Form Complete' },
-      SESSION_CREATED: { className: 'bg-amber-100 text-amber-700', label: 'Session Created' },
+      SESSION_CREATED: { className: 'bg-amber-100 text-amber-700', label: 'Sanction Created' },
       CUSTOMER_SESSION_APPROVED: { className: 'bg-green-100 text-green-700', label: 'Awaiting Final' },
       FINAL_APPROVED: { className: 'bg-green-100 text-green-700', label: 'Final Approved' },
       DISBURSED: { className: 'bg-green-100 text-green-700', label: 'Disbursed' },
@@ -940,11 +1140,15 @@ export default function SuperAdminDashboard() {
                 <div className="space-y-3">
                   {pendingForFinal.map((loan, index) => renderLoanCard(loan, index, false,
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" className="border-red-200 text-red-600 hover:bg-red-50" 
+                      <Button size="sm" variant="outline" className="border-blue-200 text-blue-600 hover:bg-blue-50"
+                        onClick={() => { setSelectedLoanId(loan.id); setShowLoanDetailPanel(true); }}>
+                        <Eye className="h-4 w-4 mr-1" />View
+                      </Button>
+                      <Button size="sm" variant="outline" className="border-red-200 text-red-600 hover:bg-red-50"
                         onClick={() => { setSelectedLoan(loan); setApprovalAction('reject'); setShowApprovalDialog(true); }}>
                         <XCircle className="h-4 w-4 mr-1" />Reject
                       </Button>
-                      <Button size="sm" className="bg-green-500 hover:bg-green-600" 
+                      <Button size="sm" className="bg-green-500 hover:bg-green-600"
                         onClick={() => { setSelectedLoan(loan); setApprovalAction('approve'); setShowApprovalDialog(true); }}>
                         <CheckCircle className="h-4 w-4 mr-1" />Final Approve
                       </Button>
@@ -1252,6 +1456,153 @@ export default function SuperAdminDashboard() {
               )}
             </CardContent>
           </Card>
+        );
+
+      case 'interest-loans':
+        return (
+          <div className="space-y-6">
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <Card className="bg-gradient-to-br from-purple-500 to-indigo-600 text-white">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <Percent className="h-8 w-8 opacity-80" />
+                    <div>
+                      <p className="text-sm opacity-80">Total Interest Loans</p>
+                      <p className="text-2xl font-bold">{interestLoanStats.totalLoans}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-to-br from-amber-500 to-orange-600 text-white">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <Clock className="h-8 w-8 opacity-80" />
+                    <div>
+                      <p className="text-sm opacity-80">Interest Only Phase</p>
+                      <p className="text-2xl font-bold">{interestLoanStats.interestOnlyPhase}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="h-8 w-8 opacity-80" />
+                    <div>
+                      <p className="text-sm opacity-80">EMI Phase</p>
+                      <p className="text-2xl font-bold">{interestLoanStats.emiPhase}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-to-br from-blue-500 to-cyan-600 text-white">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <IndianRupee className="h-8 w-8 opacity-80" />
+                    <div>
+                      <p className="text-sm opacity-80">Total Interest Collected</p>
+                      <p className="text-xl font-bold">{formatCurrency(interestLoanStats.totalInterestCollected)}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-4">
+              <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => setShowInterestLoanForm(true)}>
+                <Plus className="h-4 w-4 mr-2" />Create Interest Loan
+              </Button>
+            </div>
+
+            {/* Interest Loans List */}
+            <Card className="border-0 shadow-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Percent className="h-5 w-5 text-purple-600" />
+                  Interest Only Loans
+                </CardTitle>
+                <CardDescription>Loans in interest-only phase before EMI starts</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {interestLoans.length === 0 ? (
+                  <div className="text-center py-12 text-gray-500">
+                    <Percent className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                    <p>No interest-only loans found</p>
+                    <p className="text-sm">Create a new interest-only loan to get started</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {interestLoans.map((loan, index) => (
+                      <motion.div
+                        key={loan.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.03 }}
+                        className="p-4 border border-gray-100 rounded-xl bg-white hover:shadow-md transition-all"
+                      >
+                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                          <div className="flex items-center gap-4">
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                              loan.currentPhase === 'INTEREST_ONLY' 
+                                ? 'bg-amber-100' 
+                                : 'bg-emerald-100'
+                            }`}>
+                              {loan.currentPhase === 'INTEREST_ONLY' ? (
+                                <Clock className="h-6 w-6 text-amber-600" />
+                              ) : (
+                                <CheckCircle className="h-6 w-6 text-emerald-600" />
+                              )}
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-semibold text-gray-900">{loan.loanApplication?.applicationNo}</h4>
+                                <Badge className={
+                                  loan.currentPhase === 'INTEREST_ONLY' 
+                                    ? 'bg-amber-100 text-amber-700' 
+                                    : 'bg-emerald-100 text-emerald-700'
+                                }>
+                                  {loan.currentPhase === 'INTEREST_ONLY' ? 'Interest Only Phase' : 'EMI Phase'}
+                                </Badge>
+                              </div>
+                              <p className="text-sm text-gray-500">{loan.loanApplication?.customer?.name}</p>
+                              <p className="text-xs text-gray-400">{loan.loanApplication?.customer?.phone}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-6">
+                            <div className="text-right">
+                              <p className="text-sm text-gray-500">Principal</p>
+                              <p className="font-bold text-lg">{formatCurrency(loan.principalAmount)}</p>
+                              <p className="text-xs text-gray-400">@ {loan.interestOnlyRate}% p.a.</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-sm text-gray-500">Monthly Interest</p>
+                              <p className="font-bold text-lg text-purple-600">{formatCurrency(loan.monthlyInterestAmount)}</p>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button size="sm" variant="outline" onClick={() => viewInterestLoanDetails(loan)}>
+                                <Eye className="h-4 w-4 mr-1" />View
+                              </Button>
+                              {loan.currentPhase === 'INTEREST_ONLY' && (
+                                <Button 
+                                  size="sm" 
+                                  className="bg-emerald-500 hover:bg-emerald-600"
+                                  onClick={() => openStartEmiDialog(loan)}
+                                >
+                                  <CheckCircle className="h-4 w-4 mr-1" />Start EMI
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         );
 
       case 'users':
@@ -2578,7 +2929,7 @@ export default function SuperAdminDashboard() {
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <p className="text-xs text-emerald-600 font-medium uppercase">Session Approved</p>
+                          <p className="text-xs text-emerald-600 font-medium uppercase">Sanction Approved</p>
                           <div className="bg-emerald-50 p-3 rounded border border-emerald-200 space-y-1 text-sm">
                             <div className="flex justify-between">
                               <span className="text-gray-500">Amount:</span>
@@ -3259,7 +3610,7 @@ export default function SuperAdminDashboard() {
                               </div>
                               {loanDetails.loan.sessionForm.agent && (
                                 <div className="pt-4 border-t">
-                                  <p className="text-xs text-gray-500 mb-2">Session Created By</p>
+                                  <p className="text-xs text-gray-500 mb-2">Sanction Created By</p>
                                   <div className="flex items-center gap-2">
                                     <Avatar className="h-8 w-8">
                                       <AvatarFallback className="bg-emerald-100 text-emerald-700">
@@ -4408,6 +4759,331 @@ export default function SuperAdminDashboard() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowUserDetailsDialog(false)}>
               Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Interest Loan Create Dialog */}
+      <Dialog open={showInterestLoanForm} onOpenChange={setShowInterestLoanForm}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Percent className="h-5 w-5 text-purple-600" />
+              Create Interest Only Loan
+            </DialogTitle>
+            <DialogDescription>
+              Create a new interest-only loan. Customer will pay only monthly interest until EMI phase is started.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+            {/* Customer Selection */}
+            <div className="md:col-span-2">
+              <Label>Customer *</Label>
+              <Select value={interestLoanForm.customerId} onValueChange={(v) => setInterestLoanForm({...interestLoanForm, customerId: v})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select customer" />
+                </SelectTrigger>
+                <SelectContent>
+                  {customers.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>{c.name} ({c.email})</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Loan Amount and Interest */}
+            <div>
+              <Label>Principal Amount (₹) *</Label>
+              <Input
+                type="number"
+                value={interestLoanForm.principalAmount}
+                onChange={(e) => setInterestLoanForm({...interestLoanForm, principalAmount: parseFloat(e.target.value) || 0})}
+                placeholder="10000"
+              />
+            </div>
+            <div>
+              <Label>Interest Rate (% p.a.) *</Label>
+              <Input
+                type="number"
+                step="0.1"
+                value={interestLoanForm.interestOnlyRate}
+                onChange={(e) => setInterestLoanForm({...interestLoanForm, interestOnlyRate: parseFloat(e.target.value) || 0})}
+                placeholder="12"
+              />
+            </div>
+            
+            {/* Monthly Interest Display */}
+            <div className="md:col-span-2 p-4 bg-purple-50 rounded-lg">
+              <p className="text-sm text-purple-700">
+                <strong>Monthly Interest Amount:</strong> {' '}
+                {formatCurrency((interestLoanForm.principalAmount * interestLoanForm.interestOnlyRate) / 100 / 12)}
+              </p>
+            </div>
+
+            {/* Personal Info */}
+            <div>
+              <Label>First Name</Label>
+              <Input value={interestLoanForm.firstName} onChange={(e) => setInterestLoanForm({...interestLoanForm, firstName: e.target.value})} />
+            </div>
+            <div>
+              <Label>Last Name</Label>
+              <Input value={interestLoanForm.lastName} onChange={(e) => setInterestLoanForm({...interestLoanForm, lastName: e.target.value})} />
+            </div>
+            <div>
+              <Label>Father's Name</Label>
+              <Input value={interestLoanForm.fatherName} onChange={(e) => setInterestLoanForm({...interestLoanForm, fatherName: e.target.value})} />
+            </div>
+            <div>
+              <Label>PAN Number</Label>
+              <Input value={interestLoanForm.panNumber} onChange={(e) => setInterestLoanForm({...interestLoanForm, panNumber: e.target.value.toUpperCase()})} maxLength={10} />
+            </div>
+            <div>
+              <Label>Aadhaar Number</Label>
+              <Input value={interestLoanForm.aadhaarNumber} onChange={(e) => setInterestLoanForm({...interestLoanForm, aadhaarNumber: e.target.value.replace(/\D/g, '').slice(0, 12)})} />
+            </div>
+            <div>
+              <Label>Phone</Label>
+              <Input value={interestLoanForm.phone} onChange={(e) => setInterestLoanForm({...interestLoanForm, phone: e.target.value})} maxLength={10} />
+            </div>
+            <div>
+              <Label>Address</Label>
+              <Input value={interestLoanForm.address} onChange={(e) => setInterestLoanForm({...interestLoanForm, address: e.target.value})} />
+            </div>
+            <div>
+              <Label>City</Label>
+              <Input value={interestLoanForm.city} onChange={(e) => setInterestLoanForm({...interestLoanForm, city: e.target.value})} />
+            </div>
+            <div>
+              <Label>State</Label>
+              <Input value={interestLoanForm.state} onChange={(e) => setInterestLoanForm({...interestLoanForm, state: e.target.value})} />
+            </div>
+            <div>
+              <Label>Pincode</Label>
+              <Input value={interestLoanForm.pincode} onChange={(e) => setInterestLoanForm({...interestLoanForm, pincode: e.target.value})} maxLength={6} />
+            </div>
+
+            {/* Bank Details */}
+            <div>
+              <Label>Bank Account Number</Label>
+              <Input value={interestLoanForm.bankAccountNumber} onChange={(e) => setInterestLoanForm({...interestLoanForm, bankAccountNumber: e.target.value})} />
+            </div>
+            <div>
+              <Label>Bank IFSC</Label>
+              <Input value={interestLoanForm.bankIfsc} onChange={(e) => setInterestLoanForm({...interestLoanForm, bankIfsc: e.target.value.toUpperCase()})} maxLength={11} />
+            </div>
+            <div>
+              <Label>Bank Name</Label>
+              <Input value={interestLoanForm.bankName} onChange={(e) => setInterestLoanForm({...interestLoanForm, bankName: e.target.value})} />
+            </div>
+
+            {/* Guardian Details */}
+            <div className="md:col-span-2 mt-4">
+              <h4 className="font-medium mb-2">Guardian Details</h4>
+            </div>
+            <div>
+              <Label>Guardian 1 Name</Label>
+              <Input value={interestLoanForm.ref1Name} onChange={(e) => setInterestLoanForm({...interestLoanForm, ref1Name: e.target.value})} />
+            </div>
+            <div>
+              <Label>Guardian 1 Phone</Label>
+              <Input value={interestLoanForm.ref1Phone} onChange={(e) => setInterestLoanForm({...interestLoanForm, ref1Phone: e.target.value})} maxLength={10} />
+            </div>
+            <div>
+              <Label>Guardian 2 Name</Label>
+              <Input value={interestLoanForm.ref2Name} onChange={(e) => setInterestLoanForm({...interestLoanForm, ref2Name: e.target.value})} />
+            </div>
+            <div>
+              <Label>Guardian 2 Phone</Label>
+              <Input value={interestLoanForm.ref2Phone} onChange={(e) => setInterestLoanForm({...interestLoanForm, ref2Phone: e.target.value})} maxLength={10} />
+            </div>
+
+            {/* Credit Score */}
+            <div>
+              <Label>Credit Score (300-900)</Label>
+              <Input
+                type="number"
+                min="300"
+                max="900"
+                value={interestLoanForm.creditScore || ''}
+                onChange={(e) => setInterestLoanForm({...interestLoanForm, creditScore: parseInt(e.target.value) || 0})}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowInterestLoanForm(false)}>Cancel</Button>
+            <Button className="bg-purple-600 hover:bg-purple-700" onClick={handleCreateInterestLoan} disabled={savingInterestLoan}>
+              {savingInterestLoan ? 'Creating...' : 'Create Interest Loan'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Interest Loan Details Dialog */}
+      <Dialog open={showInterestLoanDetails} onOpenChange={setShowInterestLoanDetails}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Interest Loan Details</DialogTitle>
+            <DialogDescription>{selectedInterestLoan?.loanApplication?.applicationNo}</DialogDescription>
+          </DialogHeader>
+          
+          {selectedInterestLoan && (
+            <div className="space-y-4">
+              {/* Phase Info */}
+              <div className={`p-4 rounded-lg ${selectedInterestLoan.currentPhase === 'INTEREST_ONLY' ? 'bg-amber-50' : 'bg-emerald-50'}`}>
+                <div className="flex items-center gap-3">
+                  {selectedInterestLoan.currentPhase === 'INTEREST_ONLY' ? (
+                    <Clock className="h-8 w-8 text-amber-600" />
+                  ) : (
+                    <CheckCircle className="h-8 w-8 text-emerald-600" />
+                  )}
+                  <div>
+                    <p className="font-bold text-lg">
+                      {selectedInterestLoan.currentPhase === 'INTEREST_ONLY' ? 'Interest Only Phase' : 'EMI Phase'}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      Started: {formatDate(selectedInterestLoan.interestOnlyStartDate)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Summary */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <p className="text-xs text-gray-500">Principal</p>
+                  <p className="font-bold">{formatCurrency(selectedInterestLoan.principalAmount)}</p>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <p className="text-xs text-gray-500">Interest Rate</p>
+                  <p className="font-bold">{selectedInterestLoan.interestOnlyRate}%</p>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <p className="text-xs text-gray-500">Monthly Interest</p>
+                  <p className="font-bold text-purple-600">{formatCurrency(selectedInterestLoan.monthlyInterestAmount)}</p>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <p className="text-xs text-gray-500">Total Interest Paid</p>
+                  <p className="font-bold text-emerald-600">{formatCurrency(selectedInterestLoan.totalInterestPaid)}</p>
+                </div>
+              </div>
+
+              {/* Customer Info */}
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">Customer</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="font-medium">{selectedInterestLoan.loanApplication?.customer?.name}</p>
+                  <p className="text-sm text-gray-500">{selectedInterestLoan.loanApplication?.customer?.email}</p>
+                  <p className="text-sm text-gray-500">{selectedInterestLoan.loanApplication?.customer?.phone}</p>
+                </CardContent>
+              </Card>
+
+              {/* Payment History */}
+              {selectedInterestLoan.interestPayments?.length > 0 && (
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">Payment History</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2 max-h-48 overflow-y-auto">
+                      {selectedInterestLoan.interestPayments.slice(0, 12).map((payment: any) => (
+                        <div key={payment.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                          <div>
+                            <p className="text-sm font-medium">
+                              {payment.paymentMonth}/{payment.paymentYear}
+                            </p>
+                            <p className="text-xs text-gray-500">{formatDate(payment.dueDate)}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-medium">{formatCurrency(payment.interestAmount)}</p>
+                            <Badge className={
+                              payment.status === 'PAID' ? 'bg-emerald-100 text-emerald-700' :
+                              payment.status === 'OVERDUE' ? 'bg-red-100 text-red-700' :
+                              'bg-amber-100 text-amber-700'
+                            }>
+                              {payment.status}
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowInterestLoanDetails(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Start EMI Phase Dialog */}
+      <Dialog open={showStartEmiDialog} onOpenChange={setShowStartEmiDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Start EMI Phase</DialogTitle>
+            <DialogDescription>
+              Configure EMI settings to start the principal repayment phase.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="p-3 bg-amber-50 rounded-lg">
+              <p className="text-sm text-amber-800">
+                <strong>Current:</strong> Interest Only Phase
+              </p>
+              <p className="text-xs text-amber-600">
+                Principal: {selectedInterestLoan && formatCurrency(selectedInterestLoan.principalAmount)}
+              </p>
+            </div>
+
+            <div>
+              <Label>EMI Interest Rate (%)</Label>
+              <Input
+                type="number"
+                step="0.1"
+                value={emiForm.interestRate}
+                onChange={(e) => setEmiForm({...emiForm, interestRate: parseFloat(e.target.value) || 0})}
+              />
+              <p className="text-xs text-gray-500 mt-1">Can be different from interest-only rate</p>
+            </div>
+
+            <div>
+              <Label>Tenure (Months)</Label>
+              <Input
+                type="number"
+                value={emiForm.tenureMonths}
+                onChange={(e) => setEmiForm({...emiForm, tenureMonths: parseInt(e.target.value) || 0})}
+              />
+            </div>
+
+            {/* EMI Preview */}
+            {selectedInterestLoan && emiForm.interestRate && emiForm.tenureMonths && (
+              <div className="p-3 bg-emerald-50 rounded-lg">
+                <p className="text-sm text-emerald-800">
+                  <strong>Preview EMI:</strong> {' '}
+                  {formatCurrency(
+                    selectedInterestLoan.principalAmount * 
+                    (emiForm.interestRate / 100 / 12) * 
+                    Math.pow(1 + emiForm.interestRate / 100 / 12, emiForm.tenureMonths) / 
+                    (Math.pow(1 + emiForm.interestRate / 100 / 12, emiForm.tenureMonths) - 1)
+                  )}
+                  /month
+                </p>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowStartEmiDialog(false)}>Cancel</Button>
+            <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={handleStartEmiPhase} disabled={savingInterestLoan}>
+              {savingInterestLoan ? 'Starting...' : 'Start EMI Phase'}
             </Button>
           </DialogFooter>
         </DialogContent>

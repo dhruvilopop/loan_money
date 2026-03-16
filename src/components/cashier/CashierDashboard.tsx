@@ -247,7 +247,7 @@ export default function CashierDashboard() {
       FINAL_APPROVED: { className: 'bg-green-100 text-green-700', label: 'Ready for Disbursement' },
       DISBURSED: { className: 'bg-blue-100 text-blue-700', label: 'Disbursed' },
       ACTIVE: { className: 'bg-green-100 text-green-700', label: 'Active' },
-      SESSION_CREATED: { className: 'bg-amber-100 text-amber-700', label: 'Session Created' },
+      SESSION_CREATED: { className: 'bg-amber-100 text-amber-700', label: 'Sanction Created' },
       CUSTOMER_SESSION_APPROVED: { className: 'bg-teal-100 text-teal-700', label: 'Customer Approved' },
     };
     const c = config[status] || { className: 'bg-gray-100 text-gray-700', label: status };

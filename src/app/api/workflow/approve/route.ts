@@ -346,8 +346,8 @@ async function processSingleApproval({
       data: {
         userId: loan.customerId,
         type: 'SESSION_CREATED',
-        title: 'Loan Session Created',
-        message: `Your loan session for ${loan.applicationNo} has been created. Please review and approve.`
+        title: 'Loan Sanction Created',
+        message: `Your loan sanction for ${loan.applicationNo} has been created. Please review and approve.`
       }
     });
   }

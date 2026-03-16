@@ -111,6 +111,8 @@ model User {
   actionLogs             ActionLog[]
   undoneActions          ActionLog[]        @relation("ActionUndoBy")
   redoneActions          ActionLog[]        @relation("ActionRedoBy")
+  // Interest Only Loan relations
+  startedEmiPhaseLoans   InterestOnlyLoan[] @relation("StartedEmiPhaseBy")
   @@index([email])
   @@index([phone])
   @@index([role])
@@ -286,6 +288,7 @@ model LoanApplication {
   loanAgreement         LoanAgreement?
   progressTimelines     LoanProgressTimeline[]
   applicationFingerprints ApplicationFingerprint[]
+  interestOnlyLoan      InterestOnlyLoan?
   @@index([applicationNo])
   @@index([customerId])
   @@index([status])
@@ -1009,6 +1012,7 @@ enum LoanType {
   EDUCATION
   GOLD
   OTHER
+  INTEREST_ONLY
 }
 
 enum EMIPaymentStatus {
@@ -1882,4 +1886,103 @@ enum AssetStatus {
   WRITTEN_OFF              // Fully depreciated or lost
   SOLD                     // Sold to another party
   IDLE                     // Not in use but not disposed
+}
+
+// ==================== INTEREST ONLY LOAN ====================
+
+// Interest Only Loan - Two Phase Loan Structure
+// Phase 1: Customer pays only monthly interest
+// Phase 2: Super Admin starts EMI phase with principal repayment
+model InterestOnlyLoan {
+  id                      String              @id @default(cuid())
+  loanApplicationId       String              @unique
+  
+  // Phase tracking
+  currentPhase            String              @default("INTEREST_ONLY") // INTEREST_ONLY, EMI_PHASE
+  
+  // Principal Amount (remains constant during interest-only phase)
+  principalAmount         Float
+  
+  // Phase 1: Interest Only Settings
+  interestOnlyRate        Float               // Interest rate during interest-only phase (e.g., 12%)
+  monthlyInterestAmount   Float               // Calculated monthly interest to be paid
+  interestOnlyStartDate   DateTime            // When interest-only phase started
+  interestOnlyEndDate     DateTime?           // When interest-only phase ended (EMI started)
+  
+  // Phase 2: EMI Phase Settings (set when Super Admin starts EMI)
+  emiInterestRate         Float?              // Interest rate for EMI phase (can be different)
+  emiTenureMonths         Int?                // Tenure in months for EMI phase
+  emiAmount               Float?              // Monthly EMI amount
+  emiPhaseStartDate       DateTime?           // When EMI phase started
+  totalInterestInEmiPhase Float?              // Total interest during EMI phase
+  totalAmountInEmiPhase   Float?              // Total amount (principal + interest) in EMI phase
+  
+  // Summary tracking
+  totalInterestPaid       Float               @default(0) // Total interest paid in phase 1
+  totalMonthsPaid         Int                 @default(0) // Number of months interest paid
+  lastPaymentDate         DateTime?
+  nextPaymentDueDate      DateTime?
+  
+  // Status
+  isActive                Boolean             @default(true)
+  startedEmiPhase         Boolean             @default(false)
+  startedEmiPhaseById     String?
+  startedEmiPhaseAt       DateTime?
+  
+  // Metadata
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+  
+  // Relations
+  loanApplication         LoanApplication     @relation(fields: [loanApplicationId], references: [id], onDelete: Cascade)
+  interestPayments        InterestOnlyPayment[]
+  startedEmiPhaseBy       User?               @relation("StartedEmiPhaseBy", fields: [startedEmiPhaseById], references: [id])
+  
+  @@index([loanApplicationId])
+  @@index([currentPhase])
+  @@index([isActive])
+}
+
+// Monthly Interest Payments for Interest Only Loans
+model InterestOnlyPayment {
+  id                      String              @id @default(cuid())
+  interestOnlyLoanId      String
+  
+  // Payment details
+  paymentMonth            Int                 // Month number (1, 2, 3...)
+  paymentYear             Int                 // Year (2024, 2025...)
+  dueDate                 DateTime            // Due date for this month's interest
+  interestAmount          Float               // Interest amount due
+  
+  // Payment tracking
+  paidAmount              Float               @default(0)
+  paidDate                DateTime?
+  paymentMode             String?             // CASH, ONLINE, etc.
+  paymentReference        String?
+  utrNumber               String?
+  receiptNumber           String?
+  
+  // Status
+  status                  String              @default("PENDING") // PENDING, PAID, OVERDUE, WAIVED
+  isOverdue               Boolean             @default(false)
+  daysOverdue             Int                 @default(0)
+  penaltyAmount           Float               @default(0)
+  
+  // Waiver tracking
+  waivedAmount            Float               @default(0)
+  waiverReason            String?
+  waivedById              String?
+  waivedAt                DateTime?
+  
+  // Metadata
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+  
+  // Relations
+  interestOnlyLoan        InterestOnlyLoan    @relation(fields: [interestOnlyLoanId], references: [id], onDelete: Cascade)
+  
+  @@unique([interestOnlyLoanId, paymentMonth, paymentYear])
+  @@index([interestOnlyLoanId])
+  @@index([status])
+  @@index([dueDate])
 }
