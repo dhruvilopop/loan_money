@@ -16,9 +16,9 @@ export async function GET(request: NextRequest) {
     const where: Record<string, unknown> = {};
 
     if (startDate || endDate) {
-      where.entryDate = {};
-      if (startDate) where.entryDate.gte = new Date(startDate);
-      if (endDate) where.entryDate.lte = new Date(endDate);
+      where.entryDate = {} as Record<string, Date>;
+      if (startDate) (where.entryDate as Record<string, Date>).gte = new Date(startDate);
+      if (endDate) (where.entryDate as Record<string, Date>).lte = new Date(endDate);
     }
 
     if (referenceType) {
