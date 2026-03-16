@@ -225,7 +225,7 @@ export async function GET(request: NextRequest) {
         take: limit,
         skip: offset,
         include: {
-          createdBy: { select: { id: true, name: true, email: true, role: true } }
+          company: true
         }
       });
 

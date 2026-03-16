@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { LoanStatus } from '@prisma/client';
 
 // Helper to get valid company ID
 async function getValidCompanyId(providedCompanyId: string): Promise<string | null> {
@@ -214,12 +215,12 @@ async function getLoanPortfolioReport(companyId: string | null) {
   try {
     // Build where clause
     const loanWhere = companyId 
-      ? { companyId, status: { in: ['ACTIVE', 'DISBURSED', 'CLOSED'] } } 
-      : { status: { in: ['ACTIVE', 'DISBURSED', 'CLOSED'] } };
+      ? { companyId, status: { in: ['ACTIVE', 'DISBURSED', 'CLOSED'] as LoanStatus[] } } 
+      : { status: { in: ['ACTIVE', 'DISBURSED', 'CLOSED'] as LoanStatus[] } };
     
     const activeLoanWhere = companyId 
-      ? { companyId, status: { in: ['ACTIVE', 'DISBURSED'] } } 
-      : { status: { in: ['ACTIVE', 'DISBURSED'] } };
+      ? { companyId, status: { in: ['ACTIVE', 'DISBURSED'] as LoanStatus[] } } 
+      : { status: { in: ['ACTIVE', 'DISBURSED'] as LoanStatus[] } };
 
     // Get loan statistics
     const [totalDisbursed, totalOutstanding, activeLoans] = await Promise.all([
