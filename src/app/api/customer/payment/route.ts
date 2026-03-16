@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient, PaymentMode } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 
 const prisma = new PrismaClient();
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
             userId: loan.agentId || '',
             transactionType: 'CREDIT_INCREASE',
             amount: totalAmount,
-            paymentMode: 'ONLINE' as PaymentMode,
+            paymentMode: 'ONLINE' as const,
             creditType: 'PERSONAL',
             sourceType: 'EMI_PAYMENT',
             loanApplicationId: loanId,
@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
             userId: loan.agentId || '',
             transactionType: 'CREDIT_INCREASE',
             amount: paymentAmount,
-            paymentMode: 'ONLINE' as PaymentMode,
+            paymentMode: 'ONLINE' as const,
             creditType: 'PERSONAL',
             sourceType: 'EMI_PAYMENT',
             loanApplicationId: loanId,
@@ -205,7 +205,7 @@ export async function POST(request: NextRequest) {
             userId: loan.agentId || '',
             transactionType: 'CREDIT_INCREASE',
             amount: interestAmount,
-            paymentMode: 'ONLINE' as PaymentMode,
+            paymentMode: 'ONLINE' as const,
             creditType: 'PERSONAL',
             sourceType: 'EMI_PAYMENT',
             loanApplicationId: loanId,
