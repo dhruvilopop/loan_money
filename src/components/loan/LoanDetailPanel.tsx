@@ -1250,9 +1250,9 @@ export default function LoanDetailPanel({ loanId, open, onClose, onEMIPaid, user
                         { name: 'Bank Statement', url: loanDetails?.bankStatementDoc },
                         { name: 'Salary Slip', url: loanDetails?.salarySlipDoc },
                         { name: 'Other Documents', url: loanDetails?.otherDocs },
-                      ].filter(doc => doc.url).map((doc, i) => (
+                      ].filter(doc => doc.url).map((doc) => (
                         <a 
-                          key={i} 
+                          key={doc.name} 
                           href={doc.url} 
                           target="_blank" 
                           rel="noopener noreferrer"
@@ -1445,15 +1445,15 @@ export default function LoanDetailPanel({ loanId, open, onClose, onEMIPaid, user
                             { date: loanDetails?.finalApprovedAt, event: 'Final Approved', status: 'FINAL_APPROVED' },
                             { date: loanDetails?.disbursedAt, event: 'Loan Disbursed', status: 'DISBURSED' },
                             { date: loanDetails?.rejectedAt, event: 'Rejected', status: loanDetails?.status },
-                          ].filter(item => item.date).map((item, i, arr) => (
-                            <div key={i} className="flex gap-4">
+                          ].filter(item => item.date).map((item, idx, arr) => (
+                            <div key={item.status + '-' + idx} className="flex gap-4">
                               <div className="flex flex-col items-center">
                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                                  i === arr.length - 1 && !loanDetails?.rejectedAt ? 'bg-emerald-100' : 'bg-gray-100'
+                                  idx === arr.length - 1 && !loanDetails?.rejectedAt ? 'bg-emerald-100' : 'bg-gray-100'
                                 }`}>
                                   <CheckCircle className="h-4 w-4 text-emerald-600" />
                                 </div>
-                                {i < arr.length - 1 && (
+                                {idx < arr.length - 1 && (
                                   <div className="w-0.5 h-8 bg-gray-200" />
                                 )}
                               </div>

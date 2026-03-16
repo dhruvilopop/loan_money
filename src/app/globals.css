@@ -49,33 +49,6 @@
   --chart-5: 150 80% 45%;
 }
 
-.dark {
-  --background: 240 10% 4%;
-  --foreground: 210 40% 98%;
-  --card: 240 10% 6%;
-  --card-foreground: 210 40% 98%;
-  --popover: 240 10% 6%;
-  --popover-foreground: 210 40% 98%;
-  --primary: 190 95% 50%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 240 5% 15%;
-  --secondary-foreground: 210 40% 98%;
-  --muted: 240 5% 15%;
-  --muted-foreground: 220 10% 50%;
-  --accent: 270 70% 60%;
-  --accent-foreground: 0 0% 100%;
-  --destructive: 0 62.8% 50%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 240 5% 18%;
-  --input: 240 5% 18%;
-  --ring: 190 95% 50%;
-  --chart-1: 190 95% 50%;
-  --chart-2: 270 70% 60%;
-  --chart-3: 330 80% 60%;
-  --chart-4: 50 100% 50%;
-  --chart-5: 150 80% 45%;
-}
-
 * {
   border-color: hsl(var(--border));
   box-sizing: border-box;
@@ -321,4 +294,72 @@ input[type="range"]::-moz-range-thumb {
   html {
     scroll-behavior: auto;
   }
+}
+
+/* Loading Screen Animations */
+@keyframes logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes logo-rotate3d {
+  0%, 100% { 
+    transform: rotateY(0deg) rotateX(0deg); 
+  }
+  25% { 
+    transform: rotateY(15deg) rotateX(5deg); 
+  }
+  50% { 
+    transform: rotateY(0deg) rotateX(0deg); 
+  }
+  75% { 
+    transform: rotateY(-15deg) rotateX(-5deg); 
+  }
+}
+
+@keyframes logo-pulse {
+  0%, 100% { 
+    transform: scale(1);
+    filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.8));
+  }
+  50% { 
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 30px rgba(6, 182, 212, 1));
+  }
+}
+
+@keyframes logo-orbit {
+  from { 
+    transform: rotate(0deg) translateX(58px) rotate(0deg); 
+  }
+  to { 
+    transform: rotate(360deg) translateX(58px) rotate(-360deg); 
+  }
+}
+
+@keyframes logo-float {
+  0%, 100% { 
+    transform: translateY(0) scale(1);
+    opacity: 0.2;
+  }
+  50% { 
+    transform: translateY(-20px) scale(1.1);
+    opacity: 0.4;
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes text-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes progress-bar {
+  0% { width: 0%; }
+  50% { width: 70%; }
+  100% { width: 100%; }
 }

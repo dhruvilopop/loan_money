@@ -547,11 +547,11 @@ export default function AccountantDashboard() {
 
   const getAccountTypeColor = (type: string) => {
     const colors: Record<string, string> = {
-      ASSET: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-      LIABILITY: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-      INCOME: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-      EXPENSE: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
-      EQUITY: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+      ASSET: 'bg-blue-100 text-blue-800',
+      LIABILITY: 'bg-red-100 text-red-800',
+      INCOME: 'bg-green-100 text-green-800',
+      EXPENSE: 'bg-orange-100 text-orange-800',
+      EQUITY: 'bg-purple-100 text-purple-800',
     };
     return colors[type] || 'bg-gray-100 text-gray-800';
   };
@@ -814,7 +814,7 @@ export default function AccountantDashboard() {
             <ScrollArea className="h-48">
               <div className="space-y-3">
                 {profitAndLoss?.income?.map((item: any) => (
-                  <div key={item.accountCode} className="flex justify-between items-center p-2 bg-green-50 dark:bg-green-900/20 rounded">
+                  <div key={item.accountCode} className="flex justify-between items-center p-2 bg-green-50 rounded">
                     <div>
                       <p className="font-medium text-sm">{item.accountName}</p>
                       <p className="text-xs text-muted-foreground">{item.accountCode}</p>
@@ -823,7 +823,7 @@ export default function AccountantDashboard() {
                   </div>
                 ))}
                 <Separator />
-                <div className="flex justify-between items-center p-2 bg-green-100 dark:bg-green-900/30 rounded font-bold">
+                <div className="flex justify-between items-center p-2 bg-green-100 rounded font-bold">
                   <span>Total Income</span>
                   <span className="text-green-600">{formatCurrency(dashboardStats.totalIncome)}</span>
                 </div>
@@ -842,7 +842,7 @@ export default function AccountantDashboard() {
             <ScrollArea className="h-48">
               <div className="space-y-3">
                 {profitAndLoss?.expenses?.map((item: any) => (
-                  <div key={item.accountCode} className="flex justify-between items-center p-2 bg-red-50 dark:bg-red-900/20 rounded">
+                  <div key={item.accountCode} className="flex justify-between items-center p-2 bg-red-50 rounded">
                     <div>
                       <p className="font-medium text-sm">{item.accountName}</p>
                       <p className="text-xs text-muted-foreground">{item.accountCode}</p>
@@ -851,7 +851,7 @@ export default function AccountantDashboard() {
                   </div>
                 ))}
                 <Separator />
-                <div className="flex justify-between items-center p-2 bg-red-100 dark:bg-red-900/30 rounded font-bold">
+                <div className="flex justify-between items-center p-2 bg-red-100 rounded font-bold">
                   <span>Total Expenses</span>
                   <span className="text-red-600">{formatCurrency(dashboardStats.totalExpenses)}</span>
                 </div>
@@ -881,7 +881,7 @@ export default function AccountantDashboard() {
                   onClick={() => { setSelectedEntry(entry); setShowEntryDetailDialog(true); }}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
                       <FileText className="h-5 w-5 text-blue-600" />
                     </div>
                     <div>
@@ -1839,7 +1839,7 @@ export default function AccountantDashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
-          <CardHeader className="bg-green-50 dark:bg-green-900/20">
+          <CardHeader className="bg-green-50">
             <CardTitle className="flex items-center gap-2 text-green-600">
               <TrendingUp className="h-5 w-5" /> INCOME
             </CardTitle>
@@ -1854,7 +1854,7 @@ export default function AccountantDashboard() {
                     <TableCell className="text-right font-mono">{formatCurrency(item.amount)}</TableCell>
                   </TableRow>
                 ))}
-                <TableRow className="font-bold bg-green-50 dark:bg-green-900/20">
+                <TableRow className="font-bold bg-green-50">
                   <TableCell colSpan={2}>Total Income</TableCell>
                   <TableCell className="text-right font-mono text-green-600">{formatCurrency(profitAndLoss?.totalIncome || 0)}</TableCell>
                 </TableRow>
@@ -1864,7 +1864,7 @@ export default function AccountantDashboard() {
         </Card>
 
         <Card>
-          <CardHeader className="bg-red-50 dark:bg-red-900/20">
+          <CardHeader className="bg-red-50">
             <CardTitle className="flex items-center gap-2 text-red-600">
               <TrendingDown className="h-5 w-5" /> EXPENSES
             </CardTitle>
@@ -1879,7 +1879,7 @@ export default function AccountantDashboard() {
                     <TableCell className="text-right font-mono">{formatCurrency(item.amount)}</TableCell>
                   </TableRow>
                 ))}
-                <TableRow className="font-bold bg-red-50 dark:bg-red-900/20">
+                <TableRow className="font-bold bg-red-50">
                   <TableCell colSpan={2}>Total Expenses</TableCell>
                   <TableCell className="text-right font-mono text-red-600">{formatCurrency(profitAndLoss?.totalExpenses || 0)}</TableCell>
                 </TableRow>
@@ -2016,16 +2016,16 @@ export default function AccountantDashboard() {
             <CardTitle className="text-lg">Current Year Summary</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex justify-between items-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+            <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
               <span className="text-sm">Total Income</span>
               <span className="font-bold text-green-600">{formatCurrency(profitAndLoss?.totalIncome || 0)}</span>
             </div>
-            <div className="flex justify-between items-center p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+            <div className="flex justify-between items-center p-3 bg-red-50 rounded-lg">
               <span className="text-sm">Total Expenses</span>
               <span className="font-bold text-red-600">{formatCurrency(profitAndLoss?.totalExpenses || 0)}</span>
             </div>
             <Separator />
-            <div className="flex justify-between items-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
               <span className="font-medium">Net Profit/Loss</span>
               <span className={`font-bold text-xl ${(profitAndLoss?.netProfit || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {formatCurrency(profitAndLoss?.netProfit || 0)}
@@ -2361,7 +2361,7 @@ export default function AccountantDashboard() {
                 <div>
                   <p className="text-xs font-semibold text-muted-foreground mb-2">DEBIT</p>
                   {selectedEntry.lines.filter(l => l.debitAmount > 0).map((line) => (
-                    <div key={line.id} className="flex justify-between p-2 bg-blue-50 dark:bg-blue-900/20 rounded mb-1">
+                    <div key={line.id} className="flex justify-between p-2 bg-blue-50 rounded mb-1">
                       <span className="text-sm">{line.account?.accountName}</span>
                       <span className="font-mono">{formatCurrency(line.debitAmount)}</span>
                     </div>
@@ -2370,7 +2370,7 @@ export default function AccountantDashboard() {
                 <div>
                   <p className="text-xs font-semibold text-muted-foreground mb-2">CREDIT</p>
                   {selectedEntry.lines.filter(l => l.creditAmount > 0).map((line) => (
-                    <div key={line.id} className="flex justify-between p-2 bg-green-50 dark:bg-green-900/20 rounded mb-1">
+                    <div key={line.id} className="flex justify-between p-2 bg-green-50 rounded mb-1">
                       <span className="text-sm">{line.account?.accountName}</span>
                       <span className="font-mono">{formatCurrency(line.creditAmount)}</span>
                     </div>
@@ -2536,7 +2536,7 @@ export default function AccountantDashboard() {
             <DialogDescription>Are you sure you want to delete this {deleteTarget?.type}? This action cannot be undone.</DialogDescription>
           </DialogHeader>
           <div className="py-4">
-            <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 border border-red-200">
+            <div className="bg-red-50 rounded-lg p-4 border border-red-200">
               <div className="flex items-center gap-2 text-red-600">
                 <AlertTriangle className="h-5 w-5" />
                 <span className="font-medium">Warning</span>

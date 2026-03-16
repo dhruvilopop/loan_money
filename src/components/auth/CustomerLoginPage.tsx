@@ -9,6 +9,7 @@ import { toast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { signInWithGoogle } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
+import Image from 'next/image';
 
 interface CustomerLoginPageProps {
   onBack: () => void;
@@ -76,43 +77,11 @@ export default function CustomerLoginPage({ onBack }: CustomerLoginPageProps) {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Background Image with Overlay */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`,
-        }}
-      >
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-900/90 via-orange-900/85 to-rose-900/90" />
-        
-        {/* Animated Pattern Overlay */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-          }} />
-        </div>
-        
-        {/* Floating Orbs */}
-        <motion.div
-          animate={{ 
-            x: [0, 80, 0],
-            y: [0, -60, 0],
-            scale: [1, 1.2, 1]
-          }}
-          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-          className="absolute top-10 right-10 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{ 
-            x: [0, -70, 0],
-            y: [0, 70, 0],
-            scale: [1, 1.3, 1]
-          }}
-          transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-10 left-10 w-[500px] h-[500px] bg-orange-500/15 rounded-full blur-3xl"
-        />
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-amber-50 via-white to-orange-50">
+      {/* Subtle Background Pattern */}
+      <div className="absolute inset-0 pointer-events-none opacity-50">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-amber-100/40 via-transparent to-transparent rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-orange-100/40 via-transparent to-transparent rounded-full blur-3xl" />
       </div>
 
       {/* Back Button */}
@@ -120,7 +89,7 @@ export default function CustomerLoginPage({ onBack }: CustomerLoginPageProps) {
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         onClick={onBack}
-        className="absolute top-6 left-6 z-20 flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white/80 hover:text-white hover:bg-white/20 transition-all"
+        className="absolute top-6 left-6 z-20 flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-200 text-gray-600 hover:text-gray-900 hover:border-amber-200 hover:shadow-md transition-all"
       >
         <ArrowLeft className="h-4 w-4" />
         <span className="text-sm font-medium">Back</span>
@@ -134,35 +103,37 @@ export default function CustomerLoginPage({ onBack }: CustomerLoginPageProps) {
           transition={{ duration: 0.5 }}
           className="w-full max-w-md"
         >
-          {/* Glass Card */}
+          {/* Card */}
           <div className="relative">
-            {/* Glow Effect */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 rounded-3xl blur-lg opacity-30" />
-            
-            <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
+            <div className="relative bg-white rounded-3xl border border-gray-100 shadow-xl overflow-hidden">
               {/* Header */}
               <div className="p-8 pb-4 text-center">
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", duration: 0.8 }}
-                  className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg"
+                  className="w-16 h-16 mx-auto mb-4 relative rounded-2xl overflow-hidden shadow-lg ring-2 ring-amber-100"
                 >
-                  <Wallet className="h-8 w-8 text-white" />
+                  <Image
+                    src="/upload/mmsquare.png"
+                    alt="Money Mitra Logo"
+                    fill
+                    className="object-cover"
+                  />
                 </motion.div>
-                <h1 className="text-2xl font-bold text-white mb-1">Customer Portal</h1>
-                <p className="text-white/60 text-sm">SMFC Finance</p>
+                <h1 className="text-2xl font-bold text-gray-900 mb-1">Customer Portal</h1>
+                <p className="text-gray-500 text-sm">Money Mitra Financial Advisor</p>
               </div>
 
               {/* Slider Tabs */}
               <div className="px-8">
-                <div className="flex bg-white/5 p-1 rounded-xl border border-white/10">
+                <div className="flex bg-gray-50 p-1 rounded-xl border border-gray-100">
                   <button
                     onClick={() => setIsSignUp(false)}
                     className={`flex-1 py-2.5 px-4 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
                       !isSignUp 
-                        ? 'bg-white/20 text-white shadow-md' 
-                        : 'text-white/50 hover:text-white/70'
+                        ? 'bg-white text-gray-900 shadow-sm border border-gray-100' 
+                        : 'text-gray-500 hover:text-gray-700'
                     }`}
                   >
                     <LogIn className="h-4 w-4" />
@@ -172,8 +143,8 @@ export default function CustomerLoginPage({ onBack }: CustomerLoginPageProps) {
                     onClick={() => setIsSignUp(true)}
                     className={`flex-1 py-2.5 px-4 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
                       isSignUp 
-                        ? 'bg-white/20 text-white shadow-md' 
-                        : 'text-white/50 hover:text-white/70'
+                        ? 'bg-white text-gray-900 shadow-sm border border-gray-100' 
+                        : 'text-gray-500 hover:text-gray-700'
                     }`}
                   >
                     <UserPlus className="h-4 w-4" />
@@ -196,65 +167,65 @@ export default function CustomerLoginPage({ onBack }: CustomerLoginPageProps) {
                   >
                     {isSignUp && (
                       <div className="space-y-2">
-                        <Label className="text-white/70 text-sm">Full Name *</Label>
+                        <Label className="text-gray-700 text-sm">Full Name *</Label>
                         <div className="relative">
-                          <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
+                          <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                           <Input
                             type="text"
                             placeholder="John Doe"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="pl-12 h-12 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-amber-400/50 focus:ring-amber-400/20 rounded-xl"
+                            className="pl-12 h-12 bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-amber-400 focus:ring-amber-400/20 rounded-xl"
                           />
                         </div>
                       </div>
                     )}
 
                     <div className="space-y-2">
-                      <Label className="text-white/70 text-sm">Email Address *</Label>
+                      <Label className="text-gray-700 text-sm">Email Address *</Label>
                       <div className="relative">
-                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
+                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                         <Input
                           type="email"
                           placeholder="you@example.com"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="pl-12 h-12 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-amber-400/50 focus:ring-amber-400/20 rounded-xl"
+                          className="pl-12 h-12 bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-amber-400 focus:ring-amber-400/20 rounded-xl"
                         />
                       </div>
                     </div>
 
                     {isSignUp && (
                       <div className="space-y-2">
-                        <Label className="text-white/70 text-sm">Phone Number</Label>
+                        <Label className="text-gray-700 text-sm">Phone Number</Label>
                         <div className="relative">
-                          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
+                          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                           <Input
                             type="tel"
                             placeholder="+91 98765 43210"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
-                            className="pl-12 h-12 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-amber-400/50 focus:ring-amber-400/20 rounded-xl"
+                            className="pl-12 h-12 bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-amber-400 focus:ring-amber-400/20 rounded-xl"
                           />
                         </div>
                       </div>
                     )}
 
                     <div className="space-y-2">
-                      <Label className="text-white/70 text-sm">Password *</Label>
+                      <Label className="text-gray-700 text-sm">Password *</Label>
                       <div className="relative">
-                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
+                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                         <Input
                           type={showPassword ? 'text' : 'password'}
                           placeholder="••••••••"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="pl-12 pr-12 h-12 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-amber-400/50 focus:ring-amber-400/20 rounded-xl"
+                          className="pl-12 pr-12 h-12 bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-amber-400 focus:ring-amber-400/20 rounded-xl"
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/60"
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                         >
                           {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                         </button>
@@ -264,7 +235,7 @@ export default function CustomerLoginPage({ onBack }: CustomerLoginPageProps) {
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="w-full h-12 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold rounded-xl shadow-lg shadow-amber-500/25 transition-all"
+                      className="w-full h-12 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold rounded-xl shadow-lg shadow-amber-200/50 transition-all"
                     >
                       {loading ? (
                         <Loader2 className="h-5 w-5 animate-spin" />
@@ -280,10 +251,10 @@ export default function CustomerLoginPage({ onBack }: CustomerLoginPageProps) {
                 {/* Divider */}
                 <div className="relative my-6">
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-white/10" />
+                    <div className="w-full border-t border-gray-200" />
                   </div>
                   <div className="relative flex justify-center">
-                    <span className="px-4 bg-transparent text-white/40 text-sm">or continue with</span>
+                    <span className="px-4 bg-white text-gray-400 text-sm">or continue with</span>
                   </div>
                 </div>
 
@@ -293,7 +264,7 @@ export default function CustomerLoginPage({ onBack }: CustomerLoginPageProps) {
                   variant="outline"
                   disabled={loading}
                   onClick={handleGoogleLogin}
-                  className="w-full h-12 bg-white/5 border-white/10 hover:bg-white/10 text-white font-medium rounded-xl transition-all"
+                  className="w-full h-12 bg-white border-gray-200 hover:bg-gray-50 text-gray-700 font-medium rounded-xl transition-all"
                 >
                   <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -306,11 +277,11 @@ export default function CustomerLoginPage({ onBack }: CustomerLoginPageProps) {
 
                 {/* Terms */}
                 {isSignUp && (
-                  <p className="mt-4 text-xs text-center text-white/40">
+                  <p className="mt-4 text-xs text-center text-gray-500">
                     By creating an account, you agree to our{' '}
-                    <span className="text-amber-400 hover:underline cursor-pointer">Terms</span>
+                    <span className="text-amber-600 hover:underline cursor-pointer">Terms</span>
                     {' '}and{' '}
-                    <span className="text-amber-400 hover:underline cursor-pointer">Privacy Policy</span>
+                    <span className="text-amber-600 hover:underline cursor-pointer">Privacy Policy</span>
                   </p>
                 )}
               </div>

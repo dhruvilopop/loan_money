@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Wallet, Eye, EyeOff, Lock, Mail, Loader2, ArrowLeft, Shield } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 interface StaffLoginPageProps {
   onBack: () => void;
@@ -60,43 +61,11 @@ export default function StaffLoginPage({ onBack }: StaffLoginPageProps) {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Background Image with Overlay */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`,
-        }}
-      >
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/90 via-teal-900/85 to-slate-900/90" />
-        
-        {/* Animated Pattern Overlay */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-          }} />
-        </div>
-        
-        {/* Floating Orbs */}
-        <motion.div
-          animate={{ 
-            x: [0, 100, 0],
-            y: [0, -50, 0],
-            scale: [1, 1.2, 1]
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute top-20 left-20 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{ 
-            x: [0, -80, 0],
-            y: [0, 80, 0],
-            scale: [1, 1.3, 1]
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-20 right-20 w-[500px] h-[500px] bg-teal-500/15 rounded-full blur-3xl"
-        />
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-emerald-50">
+      {/* Subtle Background Pattern */}
+      <div className="absolute inset-0 pointer-events-none opacity-50">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-emerald-100/40 via-transparent to-transparent rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-teal-100/40 via-transparent to-transparent rounded-full blur-3xl" />
       </div>
 
       {/* Back Button */}
@@ -104,7 +73,7 @@ export default function StaffLoginPage({ onBack }: StaffLoginPageProps) {
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         onClick={onBack}
-        className="absolute top-6 left-6 z-20 flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white/80 hover:text-white hover:bg-white/20 transition-all"
+        className="absolute top-6 left-6 z-20 flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-200 text-gray-600 hover:text-gray-900 hover:border-emerald-200 hover:shadow-md transition-all"
       >
         <ArrowLeft className="h-4 w-4" />
         <span className="text-sm font-medium">Back</span>
@@ -118,24 +87,26 @@ export default function StaffLoginPage({ onBack }: StaffLoginPageProps) {
           transition={{ duration: 0.5 }}
           className="w-full max-w-md"
         >
-          {/* Glass Card */}
+          {/* Card */}
           <div className="relative">
-            {/* Glow Effect */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-3xl blur-lg opacity-30" />
-            
-            <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
+            <div className="relative bg-white rounded-3xl border border-gray-100 shadow-xl overflow-hidden">
               {/* Header */}
               <div className="p-8 pb-6 text-center">
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", duration: 0.8 }}
-                  className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg"
+                  className="w-16 h-16 mx-auto mb-4 relative rounded-2xl overflow-hidden shadow-lg ring-2 ring-emerald-100"
                 >
-                  <Wallet className="h-8 w-8 text-white" />
+                  <Image
+                    src="/upload/mmsquare.png"
+                    alt="Money Mitra Logo"
+                    fill
+                    className="object-cover"
+                  />
                 </motion.div>
-                <h1 className="text-2xl font-bold text-white mb-1">Staff Portal</h1>
-                <p className="text-white/60 text-sm">SMFC Finance</p>
+                <h1 className="text-2xl font-bold text-gray-900 mb-1">Staff Portal</h1>
+                <p className="text-gray-500 text-sm">Money Mitra Financial Advisor</p>
               </div>
 
               {/* Form */}
@@ -145,35 +116,35 @@ export default function StaffLoginPage({ onBack }: StaffLoginPageProps) {
                     <>
                       {/* Email */}
                       <div className="space-y-2">
-                        <Label className="text-white/70 text-sm">Email Address</Label>
+                        <Label className="text-gray-700 text-sm">Email Address</Label>
                         <div className="relative">
-                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
+                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                           <Input
                             type="email"
                             placeholder="name@smfc.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="pl-12 h-12 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-emerald-400/50 focus:ring-emerald-400/20 rounded-xl"
+                            className="pl-12 h-12 bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/20 rounded-xl"
                           />
                         </div>
                       </div>
 
                       {/* Password */}
                       <div className="space-y-2">
-                        <Label className="text-white/70 text-sm">Password</Label>
+                        <Label className="text-gray-700 text-sm">Password</Label>
                         <div className="relative">
-                          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
+                          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                           <Input
                             type={showPassword ? 'text' : 'password'}
                             placeholder="••••••••"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="pl-12 pr-12 h-12 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-emerald-400/50 focus:ring-emerald-400/20 rounded-xl"
+                            className="pl-12 pr-12 h-12 bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/20 rounded-xl"
                           />
                           <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/60"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                           >
                             {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                           </button>
@@ -183,8 +154,8 @@ export default function StaffLoginPage({ onBack }: StaffLoginPageProps) {
                   ) : (
                     /* 2FA */
                     <div className="space-y-2">
-                      <Label className="text-white/70 text-sm flex items-center gap-2">
-                        <Shield className="h-4 w-4 text-emerald-400" />
+                      <Label className="text-gray-700 text-sm flex items-center gap-2">
+                        <Shield className="h-4 w-4 text-emerald-500" />
                         Verification Code
                       </Label>
                       <Input
@@ -193,7 +164,7 @@ export default function StaffLoginPage({ onBack }: StaffLoginPageProps) {
                         value={verificationCode}
                         onChange={(e) => setVerificationCode(e.target.value)}
                         maxLength={6}
-                        className="h-14 text-center text-2xl tracking-widest bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-emerald-400/50 focus:ring-emerald-400/20 rounded-xl"
+                        className="h-14 text-center text-2xl tracking-widest bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/20 rounded-xl"
                       />
                     </div>
                   )}
@@ -201,7 +172,7 @@ export default function StaffLoginPage({ onBack }: StaffLoginPageProps) {
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="w-full h-12 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg shadow-emerald-500/25 transition-all"
+                    className="w-full h-12 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg shadow-emerald-200/50 transition-all"
                   >
                     {loading ? (
                       <Loader2 className="h-5 w-5 animate-spin" />
@@ -214,11 +185,11 @@ export default function StaffLoginPage({ onBack }: StaffLoginPageProps) {
                 </form>
 
                 {/* Demo Credentials */}
-                <div className="mt-6 p-4 bg-white/5 rounded-xl border border-white/10">
-                  <p className="text-xs text-white/50 font-medium mb-2">Demo Credentials:</p>
-                  <div className="text-xs text-white/60 space-y-1">
-                    <p><span className="text-white/80">Super Admin:</span> superadmin@smfc.com</p>
-                    <p><span className="text-white/80">Password:</span> password123</p>
+                <div className="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                  <p className="text-xs text-gray-500 font-medium mb-2">Demo Credentials:</p>
+                  <div className="text-xs text-gray-600 space-y-1">
+                    <p><span className="text-gray-800">Super Admin:</span> superadmin@smfc.com</p>
+                    <p><span className="text-gray-800">Password:</span> password123</p>
                   </div>
                 </div>
               </div>

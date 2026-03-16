@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
+import Loading from "./loading";
 
 export const metadata: Metadata = {
   title: "SMFC Finance",
@@ -11,7 +13,11 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Suspense fallback={<Loading />}>
+          {children}
+        </Suspense>
+      </body>
     </html>
   );
 }

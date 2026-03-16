@@ -10,7 +10,7 @@ export function Skeleton({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'animate-pulse rounded-md bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 bg-[length:200%_100%]',
+        'animate-pulse rounded-md bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%]',
         className
       )}
       style={{
@@ -22,7 +22,7 @@ export function Skeleton({ className }: SkeletonProps) {
 
 export function CardSkeleton() {
   return (
-    <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm">
+    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <Skeleton className="h-4 w-24" />
         <Skeleton className="h-8 w-8 rounded-full" />
@@ -35,13 +35,13 @@ export function CardSkeleton() {
 
 export function StatsCardSkeleton() {
   return (
-    <div className="rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-4 animate-pulse">
+    <div className="rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 p-4 animate-pulse">
       <div className="flex items-center justify-between">
         <div className="space-y-2">
-          <div className="h-3 w-20 bg-gray-200 dark:bg-gray-700 rounded" />
-          <div className="h-7 w-28 bg-gray-300 dark:bg-gray-600 rounded" />
+          <div className="h-3 w-20 bg-gray-200 rounded" />
+          <div className="h-7 w-28 bg-gray-300 rounded" />
         </div>
-        <div className="h-10 w-10 bg-gray-200 dark:bg-gray-700 rounded-full" />
+        <div className="h-10 w-10 bg-gray-200 rounded-full" />
       </div>
     </div>
   );
@@ -56,7 +56,7 @@ export function TableSkeleton({ rows = 5, cols = 4 }: { rows?: number; cols?: nu
         ))}
       </div>
       {Array.from({ length: rows }).map((_, rowIndex) => (
-        <div key={rowIndex} className="flex gap-4 py-3 border-b border-gray-100 dark:border-gray-800">
+        <div key={rowIndex} className="flex gap-4 py-3 border-b border-gray-100">
           {Array.from({ length: cols }).map((_, colIndex) => (
             <Skeleton
               key={colIndex}
@@ -84,7 +84,7 @@ export function DashboardSkeleton() {
 
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+        <div className="rounded-xl border border-gray-200 bg-white p-6">
           <Skeleton className="h-6 w-32 mb-6" />
           <div className="space-y-4">
             {[1, 2, 3, 4, 5].map((i) => (
@@ -100,7 +100,7 @@ export function DashboardSkeleton() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+        <div className="rounded-xl border border-gray-200 bg-white p-6">
           <Skeleton className="h-6 w-32 mb-6" />
           <div className="space-y-4">
             {[1, 2, 3, 4, 5].map((i) => (
@@ -151,13 +151,13 @@ export function EmptyState({
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
       {Icon && (
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-900/20 dark:to-teal-800/20 flex items-center justify-center mb-4">
+        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-50 to-teal-100 flex items-center justify-center mb-4">
           <Icon className="h-8 w-8 text-emerald-500" />
         </div>
       )}
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">{title}</h3>
+      <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
       {description && (
-        <p className="text-sm text-gray-500 dark:text-gray-400 max-w-sm mb-4">{description}</p>
+        <p className="text-sm text-gray-500 max-w-sm mb-4">{description}</p>
       )}
       {action}
     </div>
@@ -168,7 +168,7 @@ export function LoadingSpinner({ className }: { className?: string }) {
   return (
     <div className={cn('flex items-center justify-center', className)}>
       <div className="relative">
-        <div className="h-8 w-8 rounded-full border-2 border-emerald-200 dark:border-emerald-800" />
+        <div className="h-8 w-8 rounded-full border-2 border-emerald-200" />
         <div className="absolute inset-0 h-8 w-8 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin" />
       </div>
     </div>
@@ -180,7 +180,7 @@ export function PageLoader() {
     <div className="flex items-center justify-center min-h-[400px]">
       <div className="flex flex-col items-center gap-4">
         <LoadingSpinner />
-        <p className="text-sm text-gray-500 dark:text-gray-400 animate-pulse">Loading...</p>
+        <p className="text-sm text-gray-500 animate-pulse">Loading...</p>
       </div>
     </div>
   );
