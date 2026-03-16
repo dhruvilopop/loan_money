@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
           orderBy: { depreciationDate: 'desc' },
           take: 12, // Last 12 depreciation entries
         }
-      } : false,
+      } : undefined,
       orderBy: { createdAt: 'desc' },
     });
 
