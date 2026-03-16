@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get default bank account if not provided
-    let bankAccount = null;
+    let bankAccount: Awaited<ReturnType<typeof db.bankAccount.findUnique>> = null;
     if (paymentMode === 'BANK_TRANSFER' || paymentMode === 'ONLINE' || paymentMode === 'UPI') {
       if (bankAccountId) {
         bankAccount = await db.bankAccount.findUnique({
