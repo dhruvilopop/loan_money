@@ -633,7 +633,7 @@ async function seedChartOfAccounts() {
   for (const account of chartOfAccounts) {
     if (account.parentAccountCode) {
       await prisma.chartOfAccount.update({
-        where: { accountCode: account.accountCode },
+        where: { id: accountMap[account.accountCode] },
         data: {
           parentAccountId: accountMap[account.parentAccountCode],
         },
