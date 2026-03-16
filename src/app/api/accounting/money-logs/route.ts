@@ -241,7 +241,7 @@ export async function GET(request: NextRequest) {
           paymentDate: e.paymentDate,
           isApproved: e.isApproved,
           createdAt: e.createdAt,
-          createdBy: e.createdBy
+          createdBy: e.createdById
         });
       });
     }

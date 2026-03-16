@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { LoanStatus } from '@prisma/client';
+import { LoanStatus, EMIPaymentStatus } from '@prisma/client';
 
 // Helper to get valid company ID
 async function getValidCompanyId(providedCompanyId: string): Promise<string | null> {
@@ -328,12 +328,11 @@ async function getReceivablesAging(companyId: string | null) {
   const now = new Date();
   
   try {
-    const emiWhere = companyId 
-      ? { paymentStatus: 'OVERDUE', loanApplication: { companyId } } 
-      : { paymentStatus: 'OVERDUE' };
-    
     const overdueEMIs = await db.eMISchedule.findMany({
-      where: emiWhere,
+      where: {
+        paymentStatus: 'OVERDUE',
+        ...(companyId && { loanApplication: { companyId } })
+      },
       include: {
         loanApplication: {
           include: {
