@@ -87,8 +87,11 @@ export async function GET(request: NextRequest) {
       });
 
       creditTransactions.forEach((t) => {
-        const category = t.transactionType === 'CREDIT' ? 'Credit Added' :
-                        t.transactionType === 'DEBIT' ? 'Credit Deducted' :
+        const category = t.transactionType === 'CREDIT_INCREASE' ? 'Credit Added' :
+                        t.transactionType === 'CREDIT_DECREASE' ? 'Credit Deducted' :
+                        t.transactionType === 'SETTLEMENT' ? 'Settlement' :
+                        t.transactionType === 'PERSONAL_CLEARANCE' ? 'Personal Clearance' :
+                        t.transactionType === 'PERSONAL_COLLECTION' ? 'Personal Collection' :
                         'Credit Transfer';
         
         moneyLogs.push({
