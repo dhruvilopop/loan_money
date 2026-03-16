@@ -90,7 +90,7 @@ model User {
   reminders              Reminder[]
   sessions               SessionForm[]
   notificationSettings   NotificationSetting[]
-  agent                  User?               @relation("AgentStaff", fields: [agentId], references: [id])
+  agent                  User?               @relation("AgentStaff", fields: [agentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   staffMembers           User[]              @relation("AgentStaff")
   company                Company?            @relation(fields: [companyId], references: [id])
   workflowLogs           WorkflowLog[]
@@ -702,7 +702,7 @@ model ChartOfAccount {
   accountName     String
   accountType     AccountType
   parentAccountId String?
-  parentAccount   ChartOfAccount?  @relation("AccountHierarchy", fields: [parentAccountId], references: [id])
+  parentAccount   ChartOfAccount?  @relation("AccountHierarchy", fields: [parentAccountId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   subAccounts     ChartOfAccount[] @relation("AccountHierarchy")
   description     String?
   isSystemAccount Boolean          @default(false)
