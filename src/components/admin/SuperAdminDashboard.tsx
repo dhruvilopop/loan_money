@@ -17,7 +17,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Shield, FileText, CheckCircle, XCircle, Clock, Users, Wallet, AlertTriangle, Eye, Building2, UserPlus, Edit, Trash2, Settings, Save, User, ClipboardCheck, Banknote, Briefcase, Plus, TrendingUp, Activity, DollarSign, BarChart3, ArrowRight, Calculator, PieChart, X, Loader2, MapPin, Phone, Mail, Calendar, FileCheck, CreditCard, Receipt, ExternalLink, RefreshCw, Info, Hash, CreditCard as CardIcon, Landmark, UserCog } from 'lucide-react';
+import { Shield, FileText, CheckCircle, XCircle, Clock, Users, Wallet, AlertTriangle, Eye, Building2, UserPlus, Edit, Trash2, Settings, Save, User, ClipboardCheck, Banknote, Briefcase, Plus, TrendingUp, Activity, DollarSign, BarChart3, ArrowRight, Calculator, PieChart, X, Loader2, MapPin, Phone, Mail, Calendar, FileCheck, CreditCard, Receipt, ExternalLink, RefreshCw, Info, Hash, CreditCard as CardIcon, Landmark, UserCog, Percent } from 'lucide-react';
 import { formatCurrency, formatDate, generateApplicationNo } from '@/utils/helpers';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -81,6 +81,20 @@ export default function SuperAdminDashboard() {
     latePaymentPenaltyPercent: 2, gracePeriodDays: 5, bounceCharges: 500,
     allowMoratorium: true, maxMoratoriumMonths: 3,
     allowPrepayment: true, prepaymentCharges: 2, isActive: true
+  });
+  // Interest-only loan states
+  const [interestOnlyLoans, setInterestOnlyLoans] = useState<any[]>([]);
+  const [showInterestOnlyDialog, setShowInterestOnlyDialog] = useState(false);
+  const [showStartEMIDialog, setShowStartEMIDialog] = useState(false);
+  const [selectedInterestOnlyLoan, setSelectedInterestOnlyLoan] = useState<any>(null);
+  const [interestOnlyForm, setInterestOnlyForm] = useState({
+    customerId: '',
+    principalAmount: 10000,
+    interestRate: 12,
+    purpose: '',
+    disbursementMode: 'BANK_TRANSFER',
+    disbursementDate: new Date().toISOString().split('T')[0],
+    documents: {} as Record<string, string>
   });
   const [settings, setSettings] = useState<any>({
     companyName: 'Money Mitra Financial Advisor', companyLogo: '', companyTagline: 'Your Dreams, Our Support',
@@ -1754,6 +1768,112 @@ export default function SuperAdminDashboard() {
               userId={user?.id}
               userRole={user?.role || 'SUPER_ADMIN'}
             />
+          </div>
+        );
+
+      case 'interest-only':
+        return (
+          <div className="space-y-6">
+            <Card className="bg-white shadow-sm border-0">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Percent className="h-5 w-5 text-purple-600" />
+                      Interest-Only Loans
+                    </CardTitle>
+                    <CardDescription>
+                      Special loan products where customers pay only interest until EMI is activated
+                    </CardDescription>
+                  </div>
+                  <Button 
+                    className="bg-purple-500 hover:bg-purple-600"
+                    onClick={() => setShowInterestOnlyDialog(true)}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create Interest-Only Loan
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {interestOnlyLoans.length === 0 ? (
+                    <div className="col-span-full text-center py-12 text-gray-500">
+                      <Percent className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                      <p>No interest-only loans created yet</p>
+                      <p className="text-sm text-gray-400 mt-1">Create loans where customers pay only interest monthly</p>
+                    </div>
+                  ) : (
+                    interestOnlyLoans.map((loan: any) => (
+                      <Card key={loan.id} className={`border ${loan.status === 'ACTIVE' ? 'border-green-200 bg-green-50/30' : loan.status === 'INTEREST_PHASE' ? 'border-purple-200 bg-purple-50/30' : 'border-gray-200'}`}>
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <Percent className="h-5 w-5 text-purple-600" />
+                              </div>
+                              <div>
+                                <h4 className="font-semibold text-gray-900">{loan.customer?.name || 'Unknown Customer'}</h4>
+                                <p className="text-xs text-gray-500">{loan.applicationNo}</p>
+                              </div>
+                            </div>
+                            <Badge className={loan.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : loan.status === 'INTEREST_PHASE' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'}>
+                              {loan.status === 'INTEREST_PHASE' ? 'Interest Phase' : loan.status}
+                            </Badge>
+                          </div>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-gray-500">Principal Amount:</span>
+                              <span className="font-medium">₹{formatCurrency(loan.principalAmount || loan.requestedAmount)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-500">Interest Rate:</span>
+                              <span className="font-medium">{loan.interestRate}% p.a.</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-500">Monthly Interest:</span>
+                              <span className="font-medium text-purple-600">₹{formatCurrency((loan.principalAmount || loan.requestedAmount) * (loan.interestRate / 100) / 12)}</span>
+                            </div>
+                            {loan.status === 'INTEREST_PHASE' && (
+                              <div className="flex justify-between">
+                                <span className="text-gray-500">Interest Paid:</span>
+                                <span className="font-medium text-green-600">₹{formatCurrency(loan.totalInterestPaid || 0)}</span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex gap-2 mt-4 pt-4 border-t">
+                            {loan.status === 'INTEREST_PHASE' && (
+                              <Button 
+                                size="sm" 
+                                className="bg-emerald-500 hover:bg-emerald-600 flex-1"
+                                onClick={() => {
+                                  setSelectedInterestOnlyLoan(loan);
+                                  setShowStartEMIDialog(true);
+                                }}
+                              >
+                                Start EMI
+                              </Button>
+                            )}
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              onClick={() => {
+                                setSelectedLoan(loan);
+                                setSelectedLoanId(loan.id);
+                                setShowLoanDetailPanel(true);
+                              }}
+                            >
+                              <Eye className="h-3 w-3 mr-1" />
+                              View
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </div>
         );
 

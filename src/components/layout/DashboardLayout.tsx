@@ -12,7 +12,7 @@ import {
   Home, FileText, CheckCircle, Clock, Users, Wallet, Shield, Building2, BarChart3,
   Settings, LogOut, Menu, Search, Edit, Calculator, MapPin, AlertTriangle, PieChart,
   CreditCard, Banknote, User, ClipboardCheck, Calendar, Receipt, TrendingUp,
-  Target, FileCheck, Activity, Briefcase, BookOpen, IndianRupee, Landmark
+  Target, FileCheck, Activity, Briefcase, BookOpen, IndianRupee, Landmark, Percent
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Input } from '@/components/ui/input';
@@ -401,6 +401,7 @@ export const ROLE_MENU_ITEMS: Record<string, MenuItem[]> = {
     { id: 'emi-collection', label: 'EMI Collection', icon: Wallet },
     { id: 'emi-calendar', label: 'EMI Calendar', icon: Calendar },
     { id: 'offline-loans', label: 'Offline Loans', icon: FileText },
+    { id: 'interest-only', label: 'Interest Only Loans', icon: Percent },
     { id: 'pending', label: 'New Applications', icon: FileText },
     { id: 'final', label: 'Final Approvals', icon: CheckCircle },
     { id: 'progress', label: 'In Progress', icon: Clock },
