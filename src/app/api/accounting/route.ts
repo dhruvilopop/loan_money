@@ -185,7 +185,7 @@ async function getOverview(companyId: string) {
   });
 
   // Multi-company aggregation
-  let companyBreakdown = null;
+  let companyBreakdown: Array<{ id: string; name: string; code: string; totals: Record<string, number>; netProfit: number; totalAssets: number }> | null = null;
   if (isMultiCompany) {
     const companies = await db.company.findMany({
       where: { isActive: true },
@@ -491,8 +491,8 @@ async function getProfitLossHandler(companyId: string, startDate: string | null,
     success: true,
     data: {
       reportType: 'Profit & Loss Statement',
-      period: { start, end },
       ...plData,
+      period: { start, end },
       generatedAt: new Date(),
     },
   });
@@ -512,12 +512,105 @@ async function getBalanceSheetHandler(companyId: string, asOfDate: string | null
     success: true,
     data: {
       reportType: 'Balance Sheet',
+      ...bsData,
       asOfDate: asOf,
       bankAccounts,
-      ...bsData,
       generatedAt: new Date(),
     },
   });
+}
+
+// Cash flow calculation helper
+async function getCashFlow(companyId: string, startDate: Date, endDate: Date) {
+  // Get all bank transactions in the period
+  const transactions = await db.bankTransaction.findMany({
+    where: {
+      bankAccount: { companyId },
+      transactionDate: {
+        gte: startDate,
+        lte: endDate
+      }
+    },
+    include: {
+      bankAccount: true
+    }
+  });
+
+  // Get journal entries affecting cash/bank accounts
+  const cashEntries = await db.journalEntryLine.findMany({
+    where: {
+      account: {
+        accountCode: { in: ['1040', '1050'] }, // Bank and Cash accounts
+        companyId
+      },
+      journalEntry: {
+        entryDate: {
+          gte: startDate,
+          lte: endDate
+        },
+        isApproved: true
+      }
+    },
+    include: {
+      journalEntry: true,
+      account: true
+    }
+  });
+
+  // Calculate cash flow by category
+  const cashInflows: Record<string, number> = {
+    loanRepayments: 0,
+    processingFees: 0,
+    interest: 0,
+    other: 0
+  };
+
+  const cashOutflows: Record<string, number> = {
+    loanDisbursements: 0,
+    expenses: 0,
+    other: 0
+  };
+
+  // Sum up from journal entries
+  cashEntries.forEach(entry => {
+    if (entry.debitAmount > 0) {
+      // Cash inflow
+      switch (entry.journalEntry.referenceType) {
+        case 'EMI_PAYMENT':
+          cashInflows.loanRepayments += entry.debitAmount;
+          break;
+        case 'PROCESSING_FEE':
+          cashInflows.processingFees += entry.debitAmount;
+          break;
+        default:
+          cashInflows.other += entry.debitAmount;
+      }
+    } else if (entry.creditAmount > 0) {
+      // Cash outflow
+      switch (entry.journalEntry.referenceType) {
+        case 'LOAN_DISBURSEMENT':
+          cashOutflows.loanDisbursements += entry.creditAmount;
+          break;
+        case 'EXPENSE':
+          cashOutflows.expenses += entry.creditAmount;
+          break;
+        default:
+          cashOutflows.other += entry.creditAmount;
+      }
+    }
+  });
+
+  const totalInflows = Object.values(cashInflows).reduce((sum, v) => sum + v, 0);
+  const totalOutflows = Object.values(cashOutflows).reduce((sum, v) => sum + v, 0);
+  const netCashFlow = totalInflows - totalOutflows;
+
+  return {
+    cashInflows,
+    cashOutflows,
+    totalInflows,
+    totalOutflows,
+    netCashFlow
+  };
 }
 
 async function getCashFlowHandler(companyId: string, startDate: string | null, endDate: string | null) {
@@ -549,7 +642,7 @@ async function initializeAccounting(companyId: string) {
     const coaResult = await initializeChartOfAccounts(companyId);
     
     // Initialize accounting settings (inline)
-    let settingsResult = null;
+    let settingsResult: Awaited<ReturnType<typeof db.accountingSettings.upsert>> | null = null;
     try {
       settingsResult = await db.accountingSettings.upsert({
         where: { companyId },

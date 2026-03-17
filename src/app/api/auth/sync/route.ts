@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
       const userRole = role && Object.values(UserRole).includes(role) ? role : UserRole.CUSTOMER;
       
       let companyId: string | undefined;
-      let createdCompany = null;
+      let createdCompany: Awaited<ReturnType<typeof db.company.create>> | null = null;
       
       if (userRole === 'COMPANY') {
         const companyCode = `COMP-${Date.now().toString(36).toUpperCase()}`;

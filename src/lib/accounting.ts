@@ -1,50 +1,57 @@
 import { db } from '@/lib/db';
+import { AccountType } from '@prisma/client';
 
 // Default Chart of Accounts structure
-export const DEFAULT_CHART_OF_ACCOUNTS = [
+export const DEFAULT_CHART_OF_ACCOUNTS: Array<{
+  accountCode: string;
+  accountName: string;
+  accountType: AccountType;
+  isSystemAccount: boolean;
+  description: string;
+}> = [
   // ASSETS
-  { accountCode: '1000', accountName: 'Loan Principal Outstanding', accountType: 'ASSET', isSystemAccount: true, description: 'Outstanding loan principal amount' },
-  { accountCode: '1010', accountName: 'Interest Receivable', accountType: 'ASSET', isSystemAccount: true, description: 'Interest accrued but not yet received' },
-  { accountCode: '1020', accountName: 'Processing Fee Receivable', accountType: 'ASSET', isSystemAccount: true, description: 'Processing fees to be collected' },
-  { accountCode: '1030', accountName: 'Penalty Receivable', accountType: 'ASSET', isSystemAccount: true, description: 'Late payment penalties receivable' },
-  { accountCode: '1040', accountName: 'Bank Account - Main', accountType: 'ASSET', isSystemAccount: true, description: 'Primary bank account' },
-  { accountCode: '1050', accountName: 'Cash Account', accountType: 'ASSET', isSystemAccount: true, description: 'Cash on hand' },
-  { accountCode: '1060', accountName: 'Other Receivables', accountType: 'ASSET', isSystemAccount: true, description: 'Other amounts receivable' },
-  { accountCode: '1070', accountName: 'Prepaid Expenses', accountType: 'ASSET', isSystemAccount: true, description: 'Expenses paid in advance' },
-  { accountCode: '1080', accountName: 'TDS Receivable', accountType: 'ASSET', isSystemAccount: true, description: 'Tax deducted at source receivable' },
+  { accountCode: '1000', accountName: 'Loan Principal Outstanding', accountType: AccountType.ASSET, isSystemAccount: true, description: 'Outstanding loan principal amount' },
+  { accountCode: '1010', accountName: 'Interest Receivable', accountType: AccountType.ASSET, isSystemAccount: true, description: 'Interest accrued but not yet received' },
+  { accountCode: '1020', accountName: 'Processing Fee Receivable', accountType: AccountType.ASSET, isSystemAccount: true, description: 'Processing fees to be collected' },
+  { accountCode: '1030', accountName: 'Penalty Receivable', accountType: AccountType.ASSET, isSystemAccount: true, description: 'Late payment penalties receivable' },
+  { accountCode: '1040', accountName: 'Bank Account - Main', accountType: AccountType.ASSET, isSystemAccount: true, description: 'Primary bank account' },
+  { accountCode: '1050', accountName: 'Cash Account', accountType: AccountType.ASSET, isSystemAccount: true, description: 'Cash on hand' },
+  { accountCode: '1060', accountName: 'Other Receivables', accountType: AccountType.ASSET, isSystemAccount: true, description: 'Other amounts receivable' },
+  { accountCode: '1070', accountName: 'Prepaid Expenses', accountType: AccountType.ASSET, isSystemAccount: true, description: 'Expenses paid in advance' },
+  { accountCode: '1080', accountName: 'TDS Receivable', accountType: AccountType.ASSET, isSystemAccount: true, description: 'Tax deducted at source receivable' },
   
   // LIABILITIES
-  { accountCode: '2000', accountName: 'Investor Capital', accountType: 'LIABILITY', isSystemAccount: true, description: 'Capital from investors' },
-  { accountCode: '2010', accountName: 'Borrowed Funds', accountType: 'LIABILITY', isSystemAccount: true, description: 'Funds borrowed from banks/lenders' },
-  { accountCode: '2020', accountName: 'Accounts Payable', accountType: 'LIABILITY', isSystemAccount: true, description: 'Amounts owed to vendors' },
-  { accountCode: '2030', accountName: 'GST Payable', accountType: 'LIABILITY', isSystemAccount: true, description: 'GST collected to be paid' },
-  { accountCode: '2040', accountName: 'Commission Payable', accountType: 'LIABILITY', isSystemAccount: true, description: 'Agent commissions payable' },
-  { accountCode: '2050', accountName: 'TDS Payable', accountType: 'LIABILITY', isSystemAccount: true, description: 'TDS to be deposited' },
-  { accountCode: '2060', accountName: 'Security Deposits', accountType: 'LIABILITY', isSystemAccount: true, description: 'Customer security deposits' },
+  { accountCode: '2000', accountName: 'Investor Capital', accountType: AccountType.LIABILITY, isSystemAccount: true, description: 'Capital from investors' },
+  { accountCode: '2010', accountName: 'Borrowed Funds', accountType: AccountType.LIABILITY, isSystemAccount: true, description: 'Funds borrowed from banks/lenders' },
+  { accountCode: '2020', accountName: 'Accounts Payable', accountType: AccountType.LIABILITY, isSystemAccount: true, description: 'Amounts owed to vendors' },
+  { accountCode: '2030', accountName: 'GST Payable', accountType: AccountType.LIABILITY, isSystemAccount: true, description: 'GST collected to be paid' },
+  { accountCode: '2040', accountName: 'Commission Payable', accountType: AccountType.LIABILITY, isSystemAccount: true, description: 'Agent commissions payable' },
+  { accountCode: '2050', accountName: 'TDS Payable', accountType: AccountType.LIABILITY, isSystemAccount: true, description: 'TDS to be deposited' },
+  { accountCode: '2060', accountName: 'Security Deposits', accountType: AccountType.LIABILITY, isSystemAccount: true, description: 'Customer security deposits' },
   
   // INCOME
-  { accountCode: '3000', accountName: 'Interest Income', accountType: 'INCOME', isSystemAccount: true, description: 'Interest earned on loans' },
-  { accountCode: '3010', accountName: 'Processing Fee Income', accountType: 'INCOME', isSystemAccount: true, description: 'Processing fees collected' },
-  { accountCode: '3020', accountName: 'Late Fee Income', accountType: 'INCOME', isSystemAccount: true, description: 'Late payment charges' },
-  { accountCode: '3030', accountName: 'Foreclosure Charges', accountType: 'INCOME', isSystemAccount: true, description: 'Foreclosure fees' },
-  { accountCode: '3040', accountName: 'Bounce Charges Income', accountType: 'INCOME', isSystemAccount: true, description: 'Cheque/ECS bounce charges' },
-  { accountCode: '3050', accountName: 'Other Income', accountType: 'INCOME', isSystemAccount: true, description: 'Miscellaneous income' },
+  { accountCode: '3000', accountName: 'Interest Income', accountType: AccountType.INCOME, isSystemAccount: true, description: 'Interest earned on loans' },
+  { accountCode: '3010', accountName: 'Processing Fee Income', accountType: AccountType.INCOME, isSystemAccount: true, description: 'Processing fees collected' },
+  { accountCode: '3020', accountName: 'Late Fee Income', accountType: AccountType.INCOME, isSystemAccount: true, description: 'Late payment charges' },
+  { accountCode: '3030', accountName: 'Foreclosure Charges', accountType: AccountType.INCOME, isSystemAccount: true, description: 'Foreclosure fees' },
+  { accountCode: '3040', accountName: 'Bounce Charges Income', accountType: AccountType.INCOME, isSystemAccount: true, description: 'Cheque/ECS bounce charges' },
+  { accountCode: '3050', accountName: 'Other Income', accountType: AccountType.INCOME, isSystemAccount: true, description: 'Miscellaneous income' },
   
   // EXPENSES
-  { accountCode: '4000', accountName: 'Staff Salary', accountType: 'EXPENSE', isSystemAccount: true, description: 'Employee salaries' },
-  { accountCode: '4010', accountName: 'Office Rent', accountType: 'EXPENSE', isSystemAccount: true, description: 'Office rent expense' },
-  { accountCode: '4020', accountName: 'Marketing Expense', accountType: 'EXPENSE', isSystemAccount: true, description: 'Marketing and advertising' },
-  { accountCode: '4030', accountName: 'Commission Paid', accountType: 'EXPENSE', isSystemAccount: true, description: 'Agent commissions paid' },
-  { accountCode: '4040', accountName: 'Software & Hosting', accountType: 'EXPENSE', isSystemAccount: true, description: 'Software and hosting costs' },
-  { accountCode: '4050', accountName: 'Bank Charges', accountType: 'EXPENSE', isSystemAccount: true, description: 'Bank transaction fees' },
-  { accountCode: '4060', accountName: 'Utilities', accountType: 'EXPENSE', isSystemAccount: true, description: 'Electricity, internet, phone' },
-  { accountCode: '4070', accountName: 'Travel Expense', accountType: 'EXPENSE', isSystemAccount: true, description: 'Travel and conveyance' },
-  { accountCode: '4080', accountName: 'Legal & Professional', accountType: 'EXPENSE', isSystemAccount: true, description: 'Legal and professional fees' },
-  { accountCode: '4090', accountName: 'Miscellaneous Expense', accountType: 'EXPENSE', isSystemAccount: true, description: 'Other expenses' },
+  { accountCode: '4000', accountName: 'Staff Salary', accountType: AccountType.EXPENSE, isSystemAccount: true, description: 'Employee salaries' },
+  { accountCode: '4010', accountName: 'Office Rent', accountType: AccountType.EXPENSE, isSystemAccount: true, description: 'Office rent expense' },
+  { accountCode: '4020', accountName: 'Marketing Expense', accountType: AccountType.EXPENSE, isSystemAccount: true, description: 'Marketing and advertising' },
+  { accountCode: '4030', accountName: 'Commission Paid', accountType: AccountType.EXPENSE, isSystemAccount: true, description: 'Agent commissions paid' },
+  { accountCode: '4040', accountName: 'Software & Hosting', accountType: AccountType.EXPENSE, isSystemAccount: true, description: 'Software and hosting costs' },
+  { accountCode: '4050', accountName: 'Bank Charges', accountType: AccountType.EXPENSE, isSystemAccount: true, description: 'Bank transaction fees' },
+  { accountCode: '4060', accountName: 'Utilities', accountType: AccountType.EXPENSE, isSystemAccount: true, description: 'Electricity, internet, phone' },
+  { accountCode: '4070', accountName: 'Travel Expense', accountType: AccountType.EXPENSE, isSystemAccount: true, description: 'Travel and conveyance' },
+  { accountCode: '4080', accountName: 'Legal & Professional', accountType: AccountType.EXPENSE, isSystemAccount: true, description: 'Legal and professional fees' },
+  { accountCode: '4090', accountName: 'Miscellaneous Expense', accountType: AccountType.EXPENSE, isSystemAccount: true, description: 'Other expenses' },
   
   // EQUITY
-  { accountCode: '5000', accountName: 'Retained Earnings', accountType: 'EQUITY', isSystemAccount: true, description: 'Accumulated profits' },
-  { accountCode: '5010', accountName: 'Current Year Profit', accountType: 'EQUITY', isSystemAccount: true, description: 'Profit/loss for current year' },
+  { accountCode: '5000', accountName: 'Retained Earnings', accountType: AccountType.EQUITY, isSystemAccount: true, description: 'Accumulated profits' },
+  { accountCode: '5010', accountName: 'Current Year Profit', accountType: AccountType.EQUITY, isSystemAccount: true, description: 'Profit/loss for current year' },
 ];
 
 // Initialize Chart of Accounts for a company
@@ -204,6 +211,16 @@ export async function createJournalEntry(data: {
   return entry;
 }
 
+// Journal entry line type
+type JournalLine = {
+  accountCode: string;
+  debitAmount: number;
+  creditAmount: number;
+  narration?: string;
+  loanId?: string;
+  customerId?: string;
+};
+
 // Post loan disbursement entry
 export async function postLoanDisbursementEntry(data: {
   loanId: string;
@@ -218,7 +235,7 @@ export async function postLoanDisbursementEntry(data: {
   bankRefNumber?: string;
 }) {
   const entryDate = new Date();
-  const lines = [];
+  const lines: JournalLine[] = [];
   
   // Debit: Loan Principal Outstanding
   lines.push({
@@ -283,7 +300,7 @@ export async function postEMIPaymentEntry(data: {
   narration?: string;
 }) {
   const entryDate = new Date();
-  const lines = [];
+  const lines: JournalLine[] = [];
   
   // Total payment
   const totalPayment = data.principalAmount + data.interestAmount + (data.penaltyAmount || 0);

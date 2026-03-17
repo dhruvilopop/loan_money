@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
     const firebaseUid = `email-${Date.now()}`;
 
     let userCompanyId = cleanCompanyId;
-    let createdCompany = null;
+    let createdCompany: Awaited<ReturnType<typeof db.company.create>> | null = null;
 
     // Create company if role is COMPANY and no company specified
     if (role === 'COMPANY' && !cleanCompanyId) {

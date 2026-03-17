@@ -172,7 +172,7 @@ export async function PUT(request: NextRequest) {
       const previousData = actionLog.previousData ? JSON.parse(actionLog.previousData) : null;
       
       // Perform the undo based on module and action type
-      let undoResult = null;
+      let undoResult: { type: string; recordId: string } | null = null;
 
       switch (actionLog.module) {
         case 'OFFLINE_LOAN':
@@ -294,7 +294,7 @@ export async function PUT(request: NextRequest) {
       const newData = actionLog.newData ? JSON.parse(actionLog.newData) : null;
 
       // Perform the redo based on module and action type
-      let redoResult = null;
+      let redoResult: { type: string; recordId: string } | null = null;
 
       switch (actionLog.module) {
         case 'OFFLINE_LOAN':

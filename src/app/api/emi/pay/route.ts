@@ -35,7 +35,6 @@ export async function POST(request: NextRequest) {
         loanApplication: {
           include: {
             company: true,
-            agent: true,
             emiSchedules: {
               where: { paymentStatus: 'PENDING' },
               orderBy: { installmentNumber: 'asc' }
@@ -127,15 +126,12 @@ export async function POST(request: NextRequest) {
     const updatedEMI = await db.eMISchedule.update({
       where: { id: emiId },
       data: {
-        status: newEmiStatus,
         paymentStatus: newEmiStatus,
         paidAmount: (emi.paidAmount || 0) + paidAmount,
         paidPrincipal: (emi.paidPrincipal || 0) + paidPrincipal,
         paidInterest: (emi.paidInterest || 0) + paidInterest,
         paidDate: new Date(),
         paymentMode: paymentMode,
-        paymentProof: proofUrl,
-        remarks: remarks,
         isPartialPayment,
         nextPaymentDate: nextPaymentDateValue,
         isInterestOnly,
@@ -146,14 +142,13 @@ export async function POST(request: NextRequest) {
     // Create payment record
     const payment = await db.payment.create({
       data: {
-        loanId: loanId,
+        loanApplicationId: loanId,
         emiScheduleId: emiId,
         customerId: emi.loanApplication?.customerId || '',
         amount: paidAmount,
         principalComponent: paidPrincipal,
         interestComponent: paidInterest,
         paymentMode: paymentMode,
-        paymentDate: new Date(),
         status: 'COMPLETED',
         receiptNumber: `RCP-${Date.now()}`,
         paidById: paidBy,
@@ -211,7 +206,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Handle rescheduling for partial payment
-    if (paymentType === 'PARTIAL_PAYMENT' && isPartialPayment && nextPaymentDateValue) {
+    if (paymentType === 'PARTIAL_PAYMENT' && isPartialPayment && nextPaymentDateValue && partialAmount) {
       // Calculate remaining amount after partial payment
       const remainingAfterPartial = remainingAmount - partialAmount;
       
@@ -320,47 +315,25 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Update credit instantly based on credit type
-    if (creditType === 'PERSONAL') {
-      const existingCredit = await db.creditTransaction.findFirst({
-        where: { userId: paidBy, type: 'PERSONAL' }
+    // Update user's credit directly
+    if (creditType === 'PERSONAL' && paidBy) {
+      const user = await db.user.findUnique({
+        where: { id: paidBy }
       });
-
-      if (existingCredit) {
-        await db.creditTransaction.update({
-          where: { id: existingCredit.id },
-          data: { amount: existingCredit.amount + paidAmount, updatedAt: new Date() }
-        });
-      } else {
-        await db.creditTransaction.create({
-          data: {
-            userId: paidBy,
-            type: 'PERSONAL',
-            amount: paidAmount,
-            description: `EMI Payment - ${emi.loanApplication?.applicationNo || loanId}`,
-            date: new Date()
-          }
+      if (user) {
+        await db.user.update({
+          where: { id: paidBy },
+          data: { credit: user.credit + paidAmount }
         });
       }
     } else if (creditType === 'COMPANY' && companyId) {
-      const existingCredit = await db.creditTransaction.findFirst({
-        where: { companyId: companyId, type: 'COMPANY' }
+      const company = await db.company.findUnique({
+        where: { id: companyId }
       });
-
-      if (existingCredit) {
-        await db.creditTransaction.update({
-          where: { id: existingCredit.id },
-          data: { amount: existingCredit.amount + paidAmount, updatedAt: new Date() }
-        });
-      } else {
-        await db.creditTransaction.create({
-          data: {
-            companyId: companyId,
-            type: 'COMPANY',
-            amount: paidAmount,
-            description: `EMI Payment - ${emi.loanApplication?.applicationNo || loanId}`,
-            date: new Date()
-          }
+      if (company) {
+        await db.company.update({
+          where: { id: companyId },
+          data: { companyCredit: company.companyCredit + paidAmount }
         });
       }
     }
@@ -411,7 +384,6 @@ export async function POST(request: NextRequest) {
       message: getPaymentSuccessMessage(paymentType, paidAmount, remainingPrincipal),
       data: {
         emiId: updatedEMI.id,
-        status: updatedEMI.status,
         paymentStatus: updatedEMI.paymentStatus,
         paidAmount: updatedEMI.paidAmount,
         paidPrincipal: updatedEMI.paidPrincipal,
